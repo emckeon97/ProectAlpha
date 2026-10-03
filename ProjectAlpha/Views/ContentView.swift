@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var service = GiphyService()
+    @StateObject private var likeManager = LikeManager()
 
     var body: some View {
         NavigationStack {
@@ -26,7 +27,7 @@ struct ContentView: View {
                         ScrollView(.vertical) {
                             LazyVStack(spacing: 0) {
                                 ForEach(service.gifs) { gif in
-                                    GifPageView(gif: gif)
+                                    GifPageView(gif: gif, likeManager: likeManager)
                                         .containerRelativeFrame(.vertical)
                                         .id(gif.id)
                                 }
@@ -49,7 +50,10 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.black, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
-            .onAppear { service.trending() }
+            .onAppear {
+                service.likeManager = likeManager
+                service.trending()
+            }
         }
     }
 }

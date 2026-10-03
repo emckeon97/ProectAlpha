@@ -10,6 +10,9 @@ final class GiphyService: ObservableObject {
     // and paste it here.
     private let apiKey = "Rkyhk3U1aH2DlElFrmuYauK4EU7OHLEJ"
 
+    /// Set this to rank fetched GIFs by the user's liked keywords.
+    var likeManager: LikeManager?
+
     private var currentTask: Task<Void, Never>?
 
     func trending() {
@@ -44,7 +47,13 @@ final class GiphyService: ObservableObject {
 
                 let (data, _) = try await URLSession.shared.data(from: components.url!)
                 let decoded = try JSONDecoder().decode(GiphyResponse.self, from: data)
-                gifs = decoded.data
+                let fetched = decoded.data
+                if let ranker = likeManager {
+                    // Algorithm: most-liked-keyword-matching GIFs first.
+                    gifs = fetched.sorted { ranker.score($0) > ranker.score($1) }
+                } else {
+                    gifs = fetched
+                }
             } catch is CancellationError {
                 // Superseded by a newer request; ignore.
             } catch {
