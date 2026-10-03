@@ -4,38 +4,52 @@ struct ContentView: View {
     @StateObject private var service = GiphyService()
     @State private var query = ""
 
-    private let columns = [GridItem(.flexible()), GridItem(.flexible())]
-
     var body: some View {
         NavigationStack {
-            Group {
+            ZStack {
+                Color.black.ignoresSafeArea()
+
                 if service.isLoading && service.gifs.isEmpty {
-                    ProgressView("Loading GIFs…")
+                    ProgressView()
+                        .tint(.white)
                 } else if let error = service.errorMessage, service.gifs.isEmpty {
                     VStack(spacing: 12) {
                         Image(systemName: "exclamationmark.triangle")
                             .font(.largeTitle)
+                            .foregroundColor(.white)
                         Text(error)
+                            .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                     }
                     .padding()
                 } else {
-                    ScrollView {
-                        LazyVGrid(columns: columns, spacing: 8) {
-                            ForEach(service.gifs) { gif in
-                                NavigationLink(destination: GifDetailView(gif: gif)) {
-                                    AnimatedGifView(url: gif.previewURL)
-                                        .frame(height: 150)
-                                        .clipped()
-                                        .cornerRadius(8)
+                    ScrollViewReader { proxy in
+                        ScrollView(.vertical) {
+                            LazyVStack(spacing: 0) {
+                                ForEach(service.gifs) { gif in
+                                    GifPageView(gif: gif)
+                                        .containerRelativeFrame(.vertical)
+                                        .id(gif.id)
+                                }
+                            }
+                            .scrollTargetLayout()
+                        }
+                        .scrollTargetBehavior(.paging)
+                        .ignoresSafeArea()
+                        .onChange(of: service.gifs.map(\.id)) { _, _ in
+                            if let first = service.gifs.first {
+                                withAnimation {
+                                    proxy.scrollTo(first.id, anchor: .top)
                                 }
                             }
                         }
-                        .padding(8)
                     }
                 }
             }
             .navigationTitle("Project Alpha")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.black, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .searchable(text: $query, prompt: "Search GIFs")
             .onSubmit(of: .search) { service.search(query) }
             .onAppear { service.trending() }
