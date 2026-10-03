@@ -428,6 +428,7 @@
 				kind = upToNextMajorVersion;
 				minimumVersion = 12.0.0;
 			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 /* Begin XCSwiftPackageProductDependency section */
 		8F4B0C3D2E5F6A71829304B5 /* GoogleMobileAds */ = {
