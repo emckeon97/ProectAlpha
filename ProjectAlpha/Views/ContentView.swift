@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var service = GiphyService()
-    @State private var query = ""
 
     var body: some View {
         NavigationStack {
@@ -50,8 +49,6 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.black, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
-            .searchable(text: $query, prompt: "Search GIFs")
-            .onSubmit(of: .search) { service.search(query) }
             .onAppear { service.trending() }
         }
     }

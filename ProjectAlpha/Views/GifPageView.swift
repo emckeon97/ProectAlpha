@@ -12,24 +12,15 @@ struct GifPageView: View {
             VStack {
                 Spacer()
 
-                VStack(spacing: 10) {
-                    Text(gif.title.isEmpty ? "Untitled GIF" : gif.title)
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                        .shadow(radius: 4)
-
-                    if let url = gif.fullURL {
-                        ShareLink(item: url) {
-                            Label("Share", systemImage: "square.and.arrow.up")
-                                .foregroundColor(.white)
-                        }
-                        .buttonStyle(.bordered)
-                        .tint(.white)
+                if let url = gif.fullURL {
+                    ShareLink(item: url) {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                            .foregroundColor(.white)
                     }
+                    .buttonStyle(.bordered)
+                    .tint(.white)
+                    .padding(.bottom, 60)
                 }
-                .padding(.bottom, 60)
             }
         }
     }
