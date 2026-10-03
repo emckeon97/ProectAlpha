@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// One full-screen page in the swipe feed.
-struct GifPageView: View {
-    let gif: Gif
+/// One full-screen page in the meme feed: image, GIF, or video.
+struct FeedItemView: View {
+    let item: FeedItem
     @ObservedObject var likeManager: LikeManager
 
     @State private var showingComments = false
@@ -10,8 +10,12 @@ struct GifPageView: View {
 
     var body: some View {
         ZStack {
-            AnimatedGifView(url: gif.fullURL)
-                .ignoresSafeArea()
+            if item.kind == .video {
+                VideoPlayerView(url: item.url)
+            } else {
+                AnimatedGifView(url: item.url)
+                    .ignoresSafeArea()
+            }
 
             VStack {
                 Spacer()
@@ -21,12 +25,12 @@ struct GifPageView: View {
 
                     Button {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-                            likeManager.toggleLike(gif)
+                            likeManager.toggleLike(id: item.id, title: item.title)
                         }
                     } label: {
-                        Image(systemName: likeManager.isLiked(gif) ? "face.smiling.fill" : "face.smiling")
+                        Image(systemName: likeManager.isLiked(id: item.id) ? "face.smiling.fill" : "face.smiling")
                             .font(.title2)
-                            .foregroundColor(likeManager.isLiked(gif) ? .yellow : .white)
+                            .foregroundColor(likeManager.isLiked(id: item.id) ? .yellow : .white)
                             .padding(12)
                             .background(Color.black.opacity(0.55))
                             .clipShape(Circle())
@@ -54,15 +58,13 @@ struct GifPageView: View {
                             .clipShape(Circle())
                     }
 
-                    if let url = gif.fullURL {
-                        ShareLink(item: url) {
-                            Image(systemName: "square.and.arrow.up")
-                                .font(.title2)
-                                .foregroundColor(.white)
-                                .padding(12)
-                                .background(Color.black.opacity(0.55))
-                                .clipShape(Circle())
-                        }
+                    ShareLink(item: item.url) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .padding(12)
+                            .background(Color.black.opacity(0.55))
+                            .clipShape(Circle())
                     }
 
                     Spacer()
@@ -71,10 +73,10 @@ struct GifPageView: View {
             }
         }
         .sheet(isPresented: $showingComments) {
-            CommentsView(postID: nil, gifID: gif.id)
+            CommentsView(postID: nil, gifID: item.id)
         }
         .sheet(isPresented: $showingReport) {
-            ReportView(target: .gif(id: gif.id, title: gif.title))
+            ReportView(target: .gif(id: item.id, title: item.title))
         }
     }
 }

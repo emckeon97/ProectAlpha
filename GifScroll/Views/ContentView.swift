@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var service = GiphyService()
+    @StateObject private var service = RedditService()
     @EnvironmentObject var likeManager: LikeManager
 
     var body: some View {
@@ -9,10 +9,10 @@ struct ContentView: View {
             ZStack {
                 Color.black.ignoresSafeArea()
 
-                if service.isLoading && service.gifs.isEmpty {
+                if service.isLoading && service.items.isEmpty {
                     ProgressView()
                         .tint(.white)
-                } else if let error = service.errorMessage, service.gifs.isEmpty {
+                } else if let error = service.errorMessage, service.items.isEmpty {
                     VStack(spacing: 12) {
                         Image(systemName: "exclamationmark.triangle")
                             .font(.largeTitle)
@@ -26,18 +26,18 @@ struct ContentView: View {
                     ScrollViewReader { proxy in
                         ScrollView(.vertical) {
                             LazyVStack(spacing: 0) {
-                                ForEach(service.gifs) { gif in
-                                    GifPageView(gif: gif, likeManager: likeManager)
+                                ForEach(service.items) { item in
+                                    FeedItemView(item: item, likeManager: likeManager)
                                         .containerRelativeFrame(.vertical)
-                                        .id(gif.id)
+                                        .id(item.id)
                                 }
                             }
                             .scrollTargetLayout()
                         }
                         .scrollTargetBehavior(.paging)
                         .ignoresSafeArea()
-                        .onChange(of: service.gifs.map(\.id)) { _, _ in
-                            if let first = service.gifs.first {
+                        .onChange(of: service.items.map(\.id)) { _, _ in
+                            if let first = service.items.first {
                                 withAnimation {
                                     proxy.scrollTo(first.id, anchor: .top)
                                 }
@@ -52,13 +52,8 @@ struct ContentView: View {
             .toolbarColorScheme(.dark, for: .navigationBar)
             .onAppear {
                 service.likeManager = likeManager
-                service.comedyFeed()
+                service.memeFeed()
             }
         }
     }
-}
-
-#Preview {
-    ContentView()
-        .environmentObject(LikeManager())
 }
