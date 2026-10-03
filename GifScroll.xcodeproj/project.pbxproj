@@ -35,7 +35,7 @@
 		FFE9A60046D8020B76DA7E88 /* RepostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EB5BEA4AD000EF0B811BB7 /* RepostService.swift */; };
 		E389C33BF347E2E9216D874E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FA35CE5D1ADEEAA6109627 /* ProfileView.swift */; };
 		BB7E3F6A5B8C9D04152637E8 /* AdBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6D2E5F4B7B8C93041526D7 /* AdBannerView.swift */; };
-		9A5C1D4E3F6A7B82930415C6 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 8F4B0C3D2E5F6A71829304B5 /* GoogleMobileAds */; };
+		9A5C1D4E3F6A7B82930415C6 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 8F4B0C3D2E5F6A71829304B5 /* GoogleMobileAds */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -330,7 +330,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.emckeon97.GifScroll;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -364,7 +364,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.emckeon97.GifScroll;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;

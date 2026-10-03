@@ -1,14 +1,17 @@
 import SwiftUI
-import GoogleMobileAds
 
-/// AdMob config — live IDs. Change adEveryNItems to adjust ad frequency.
+/// AdMob config — live IDs. Change adPattern to adjust ad frequency.
 enum AdConfig {
     static let bannerUnitID = "ca-app-pub-8263714518098380/5630499497"
     /// Ad slots follow this repeating pattern: 5 memes, ad, 10 memes, ad, ...
     static let adPattern = [5, 10]
 }
 
-/// Full-screen ad page slotted into the vertical feed.
+#if canImport(GoogleMobileAds)
+import GoogleMobileAds
+
+/// Full-screen ad page slotted into the vertical feed (iOS only —
+/// GoogleMobileAds has no Mac Catalyst slice).
 struct AdPageView: View {
     var body: some View {
         VStack(spacing: 8) {
@@ -52,3 +55,11 @@ class BannerDelegate: NSObject, BannerViewDelegate {
         print("GifScrollAds: banner failed: \(error.localizedDescription)")
     }
 }
+#else
+/// Catalyst stub — no ads on macOS, so ad slots are never inserted there.
+struct AdPageView: View {
+    var body: some View {
+        Color.black
+    }
+}
+#endif

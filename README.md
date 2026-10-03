@@ -1,11 +1,12 @@
 # GifScroll
 
-A comedy meme app for iOS and iPadOS. Swipe through an endless feed of funny memes, GIFs, and videos, react with a laugh, talk trash in the comments, and upload your own memes for the community.
+A comedy meme app for iOS, iPadOS, and macOS. Swipe through an endless feed of funny memes, GIFs, and videos, react with a laugh, talk trash in the comments, and upload your own memes for the community.
 
 ## Compatibility
 
 - **iOS** 17 and later (iPhone)
 - **iPadOS** 17 and later (iPad, all orientations)
+- **macOS** (via Mac Catalyst — runs natively on Apple silicon and Intel Macs; no ads on Mac)
 
 ## What it does
 

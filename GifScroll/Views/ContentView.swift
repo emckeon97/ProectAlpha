@@ -5,7 +5,9 @@ struct ContentView: View {
     @EnvironmentObject var likeManager: LikeManager
 
     /// Feed pages with ad slots (nil) interleaved on a repeating 5 / 10 pattern.
+    /// On macOS (Catalyst) there is no AdMob SDK, so no ad slots are inserted.
     private var pages: [FeedItem?] {
+        #if canImport(GoogleMobileAds)
         var result: [FeedItem?] = []
         var sinceAd = 0
         var patternIndex = 0
@@ -19,6 +21,9 @@ struct ContentView: View {
             }
         }
         return result
+        #else
+        return service.items.map { Optional($0) }
+        #endif
     }
 
     var body: some View {
