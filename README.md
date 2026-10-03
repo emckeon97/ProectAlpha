@@ -1,12 +1,11 @@
 # GifScroll
 
-A comedy meme app for iOS, iPadOS, and macOS. Swipe through an endless feed of funny memes, GIFs, and videos, react with a laugh, talk trash in the comments, and upload your own memes for the community.
+A comedy meme app for iOS and iPadOS. Swipe through an endless feed of funny memes, GIFs, and videos, react with a laugh, talk trash in the comments, and upload your own memes for the community.
 
 ## Compatibility
 
 - **iOS** 17 and later (iPhone)
 - **iPadOS** 17 and later (iPad, all orientations)
-- **macOS** (via Mac Catalyst — runs natively on Apple silicon and Intel Macs)
 
 ## What it does
 
@@ -18,5 +17,8 @@ A comedy meme app for iOS, iPadOS, and macOS. Swipe through an endless feed of f
 - **Reports** — flag anything that crosses the line; reports go to moderation.
 - **Accounts** — optional email sign-in to post under your own name.
 
+## Backend
+
+GifScroll uses Supabase for auth, uploads, comments, and reports. The SQL setup (tables for posts, comments, reports, and reposts, plus the `post-images` storage bucket) lives in the release notes. An Android port shares the same backend.
 
 © 2026 Elijah McKeon. All rights reserved.
