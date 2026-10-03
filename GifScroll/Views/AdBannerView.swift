@@ -25,6 +25,10 @@ struct AdPageView: View {
 }
 
 struct AdBannerView: UIViewRepresentable {
+    func makeCoordinator() -> BannerDelegate {
+        BannerDelegate()
+    }
+
     func makeUIView(context: Context) -> BannerView {
         let banner = BannerView()
         banner.adUnitID = AdConfig.bannerUnitID
@@ -35,9 +39,16 @@ struct AdBannerView: UIViewRepresentable {
         banner.rootViewController = UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
             .first?.windows.first(where: { $0.isKeyWindow })?.rootViewController
+        banner.delegate = context.coordinator
         banner.load(Request())
         return banner
     }
 
     func updateUIView(_ uiView: BannerView, context: Context) {}
+}
+
+class BannerDelegate: NSObject, BannerViewDelegate {
+    func bannerView(_ bannerView: BannerView, didFailToReceiveAdWithError error: Error) {
+        print("GifScrollAds: banner failed: \(error.localizedDescription)")
+    }
 }
