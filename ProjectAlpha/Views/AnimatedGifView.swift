@@ -17,7 +17,7 @@ struct AnimatedGifView: UIViewRepresentable {
         guard let url else { return }
         let html = """
         <html><body style="margin:0;background:#000">
-        <img src="\(url.absoluteString)" style="width:100vw;height:100vh;object-fit:cover;display:block">
+        <img src="\(url.absoluteString)" style="width:100vw;height:100vh;object-fit:contain;display:block">
         </body></html>
         """
         uiView.loadHTMLString(html, baseURL: nil)
