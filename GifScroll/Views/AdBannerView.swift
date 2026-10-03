@@ -6,7 +6,7 @@ import GoogleMobileAds
 /// swap the values here (and GADApplicationIdentifier in Info.plist).
 enum AdConfig {
     static let bannerUnitID = "ca-app-pub-3940256099942544/6300978111"
-    static let adEveryNItems = 6
+    static let adEveryNItems = 5
 }
 
 /// Full-screen ad page slotted into the vertical feed.
