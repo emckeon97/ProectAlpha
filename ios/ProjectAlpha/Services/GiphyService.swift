@@ -8,7 +8,7 @@ final class GiphyService: ObservableObject {
 
     // Get a free key at https://developers.giphy.com/dashboard/
     // and paste it here.
-    private let apiKey = "YOUR_GIPHY_API_KEY"
+    private let apiKey = "Rkyhk3U1aH2DlElFrmuYauK4EU7OHLEJ"
 
     private var currentTask: Task<Void, Never>?
 
