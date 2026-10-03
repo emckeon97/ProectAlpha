@@ -6,9 +6,9 @@ final class GiphyService: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    // Get a free key at https://developers.giphy.com/dashboard/
-    // and paste it here.
-    private let apiKey = "Rkyhk3U1aH2DlElFrmuYauK4EU7OHLEJ"
+    /// Your key lives in Secrets.swift (gitignored).
+    /// Copy Secrets.template.swift to Secrets.swift and paste it there.
+    private let apiKey = Secrets.giphyAPIKey
 
     /// Set this to rank fetched GIFs by the user's liked keywords.
     var likeManager: LikeManager?

@@ -1,0 +1,6 @@
+# Local secrets — never commit
+GifScroll/Secrets.swift
+
+# Xcode
+*.xcuserdata/
+DerivedData/
