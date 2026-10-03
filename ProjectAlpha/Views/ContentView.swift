@@ -46,7 +46,7 @@ struct ContentView: View {
                     }
                 }
             }
-            .navigationTitle("Project Alpha")
+            .navigationTitle("GifScroll")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.black, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)

@@ -42,7 +42,7 @@ struct GifPageView: View {
 
                     Spacer()
                 }
-                .padding(.bottom, 60)
+                .padding(.bottom, 100)
             }
         }
     }

@@ -7,7 +7,7 @@ import UIKit
 final class PostService: ObservableObject {
     @Published private(set) var posts: [Post] = []
 
-    private let supabase = SupabaseManager()
+    private let supabase = SupabaseManager.shared
     private let imageCache = NSCache<NSString, UIImage>()
     private let postsKey = "projectalpha.posts"
     private var remoteAvailable = true

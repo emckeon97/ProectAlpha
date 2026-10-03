@@ -41,7 +41,7 @@ struct UserFeedView: View {
                     .ignoresSafeArea()
                 }
             }
-            .navigationTitle("Fresh")
+            .navigationTitle("GifScroll")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.black, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)

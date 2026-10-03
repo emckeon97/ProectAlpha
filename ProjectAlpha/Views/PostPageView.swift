@@ -7,6 +7,7 @@ struct PostPageView: View {
 
     @EnvironmentObject var postService: PostService
     @State private var image: UIImage?
+    @State private var showingComments = false
 
     var body: some View {
         ZStack {
@@ -51,13 +52,27 @@ struct PostPageView: View {
                             .clipShape(Circle())
                     }
 
+                    Button {
+                        showingComments = true
+                    } label: {
+                        Image(systemName: "bubble.left")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .padding(12)
+                            .background(Color.black.opacity(0.55))
+                            .clipShape(Circle())
+                    }
+
                     Spacer()
                 }
-                .padding(.bottom, 60)
+                .padding(.bottom, 100)
             }
         }
         .task {
             image = await postService.loadImage(for: post)
+        }
+        .sheet(isPresented: $showingComments) {
+            CommentsView(post: post)
         }
     }
 }
