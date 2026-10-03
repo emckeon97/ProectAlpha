@@ -65,6 +65,7 @@
 		E72FA60E670AE2DA638C2F0B /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		EECBCBF4DCB76C106A12ADCB /* LikeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeManager.swift; sourceTree = "<group>"; };
 		F960768F0EDEB1D145DDACC1 /* GifScrollApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifScrollApp.swift; sourceTree = "<group>"; };
+		F86432ED7BF70F908D92B572 /* GifScrollMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GifScrollMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEC42B5C69D2BCDCC39F7D16 /* AnimatedGifView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedGifView.swift; sourceTree = "<group>"; };
 		6A4B8F9BE5E2E3E5BDB6DEA0 /* Repost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repost.swift; sourceTree = "<group>"; };
 		92EB5BEA4AD000EF0B811BB7 /* RepostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepostService.swift; sourceTree = "<group>"; };
@@ -81,6 +82,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		98897BCEECAD3F1F06B65648 /* FrameworksBuildPhase */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -88,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				9D107A8E6B8703D2B43D8307 /* GifScroll.app */,
+				F86432ED7BF70F908D92B572 /* GifScrollMac.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -181,6 +191,23 @@
 			productReference = 9D107A8E6B8703D2B43D8307 /* GifScroll.app */;
 			productType = "com.apple.product-type.application";
 		};
+		519C864F4CB663758C864724 /* GifScrollMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DD7B178CB88A00A549D364B9 /* Build configuration list for PBXNativeTarget "GifScrollMac" */;
+			buildPhases = (
+				71B418CF44983A0A2653C33F /* Sources */,
+				98897BCEECAD3F1F06B65648 /* Frameworks */,
+				C2A0CC8C51422BA19AF3A7E9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GifScrollMac;
+			productName = GifScrollMac;
+			productReference = F86432ED7BF70F908D92B572 /* GifScrollMac.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -207,6 +234,7 @@
 			projectRoot = "";
 			targets = (
 				0E8A3AD980EC179856012B7E /* GifScroll */,
+				519C864F4CB663758C864724 /* GifScrollMac */,
 			);
 		};
 /* End PBXProject section */
@@ -220,10 +248,52 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C2A0CC8C51422BA19AF3A7E9 /* ResourcesBuildPhase */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BCDEA934D2501353B4C4CE9F /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1CDF2F71A52B082132B04DFF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6B85BC543F6CD3CD9785D800 /* GifScrollApp.swift in Sources */,
+				1FC1B1D68467C6268C08C1C2 /* Gif.swift in Sources */,
+				045A9F16D7D3EA8E2524D3A2 /* GiphyService.swift in Sources */,
+				93ED573C7D74BDC03207517E /* AnimatedGifView.swift in Sources */,
+				0DCEA4EEE089CC1AAB41342A /* ContentView.swift in Sources */,
+				4E85A865309160B243A7B3F8 /* GifPageView.swift in Sources */,
+				4474EBCF50B89BB3B509F3C2 /* LikeManager.swift in Sources */,
+				337282ACC70AF977A90661DE /* Post.swift in Sources */,
+				A9604C929A9D23D69B3A6A4D /* PostService.swift in Sources */,
+				1ADA1F03CDC2DEBCE0693D00 /* UploadView.swift in Sources */,
+				8A7A95538B2D7B66C892AF41 /* UserFeedView.swift in Sources */,
+				FC219D4D5190BC99B39CE5AA /* PostPageView.swift in Sources */,
+				BCDD9ABF5D9576F68E961C18 /* MainTabView.swift in Sources */,
+				55C5BCDFCE520A9E4C8526D2 /* SupabaseManager.swift in Sources */,
+				C48318FADF80F394ACE51DA5 /* Comment.swift in Sources */,
+				A0879025EC5111B795EE6A5F /* AuthManager.swift in Sources */,
+				9A3C5F8FFA5AF500A19B879D /* AuthView.swift in Sources */,
+				2E8D896CF14CFA591FB4767E /* AccountView.swift in Sources */,
+				78E54E25750E8D5C7973C731 /* CommentsView.swift in Sources */,
+				7B9D18AF30718E06001408E5 /* RedditService.swift in Sources */,
+				041E1855DE81532BA52A8297 /* ReportView.swift in Sources */,
+				43A9A6CEF87E39EE3D7D6E2F /* Secrets.swift in Sources */,
+				7B9D18B130718E0D001408E5 /* VideoPlayerView.swift in Sources */,
+				E389C33BF347E2E9216D874E /* ProfileView.swift in Sources */,
+				FFE9A60046D8020B76DA7E88 /* RepostService.swift in Sources */,
+				0743FFAF7F87E2DCA36E65D1 /* Repost.swift in Sources */,
+				BB7E3F6A5B8C9D04152637E8 /* AdBannerView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		71B418CF44983A0A2653C33F /* SourcesBuildPhase */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -330,7 +400,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.emckeon97.GifScroll;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -364,7 +434,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.emckeon97.GifScroll;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -418,6 +488,74 @@
 			};
 			name = Debug;
 		};
+		EB061A9ACEF9C6AD11D9E905 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				GCC_DYNAMIC_NO_COMMON = YES;
+				INFOPLIST_FILE = GifScroll/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.emckeon97.GifScroll.mac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4A9ABD8669FDF463D6340781 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				GCC_DYNAMIC_NO_COMMON = YES;
+				INFOPLIST_FILE = GifScroll/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.emckeon97.GifScroll.mac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -452,6 +590,15 @@
 			buildConfigurations = (
 				9586E89FBE346731A8FAC1E8 /* Debug */,
 				C08309BB1D0C93C4165F9DF3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DD7B178CB88A00A549D364B9 /* Build configuration list for PBXNativeTarget "GifScrollMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB061A9ACEF9C6AD11D9E905 /* Debug */,
+				4A9ABD8669FDF463D6340781 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
