@@ -1,8 +1,10 @@
 import SwiftUI
 
-/// Comment thread for a single post, presented as a sheet.
+/// Comment thread for a user post or a GIF, presented as a sheet.
+/// Anonymous commenting is allowed; signed-in users post under their display name.
 struct CommentsView: View {
-    let post: Post
+    let postID: String?
+    let gifID: String?
 
     @EnvironmentObject var auth: AuthManager
     @Environment(\.dismiss) var dismiss
@@ -11,6 +13,7 @@ struct CommentsView: View {
     @State private var draft = ""
     @State private var isLoading = true
     @State private var isSending = false
+    @State private var reportingComment: Comment?
 
     var body: some View {
         NavigationStack {
@@ -29,13 +32,24 @@ struct CommentsView: View {
                     Spacer()
                 } else {
                     List(comments) { comment in
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(comment.displayName)
-                                .font(.caption)
-                                .bold()
-                                .foregroundColor(.gray)
-                            Text(comment.body)
-                                .foregroundColor(.white)
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(comment.displayName)
+                                    .font(.caption)
+                                    .bold()
+                                    .foregroundColor(.gray)
+                                Text(comment.body)
+                                    .foregroundColor(.white)
+                            }
+                            Spacer()
+                            Button {
+                                reportingComment = comment
+                            } label: {
+                                Image(systemName: "flag")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                            .buttonStyle(.plain)
                         }
                         .listRowBackground(Color.black)
                     }
@@ -44,12 +58,8 @@ struct CommentsView: View {
                 }
 
                 HStack {
-                    TextField(
-                        auth.isSignedIn ? "Add a comment…" : "Sign in to comment",
-                        text: $draft
-                    )
-                    .textFieldStyle(.roundedBorder)
-                    .disabled(!auth.isSignedIn)
+                    TextField("Add a comment…", text: $draft)
+                        .textFieldStyle(.roundedBorder)
 
                     Button { send() } label: {
                         if isSending {
@@ -59,7 +69,7 @@ struct CommentsView: View {
                         }
                     }
                     .disabled(
-                        !auth.isSignedIn || isSending
+                        isSending
                             || draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                     )
                 }
@@ -77,12 +87,17 @@ struct CommentsView: View {
                 }
             }
             .task { await load() }
+            .sheet(item: $reportingComment) { comment in
+                ReportView(target: .comment(comment))
+            }
         }
     }
 
     private func load() async {
         do {
-            comments = try await SupabaseManager.shared.fetchComments(postID: post.id)
+            comments = try await SupabaseManager.shared.fetchComments(
+                postID: postID, gifID: gifID
+            )
         } catch {
             comments = []
         }
@@ -96,7 +111,8 @@ struct CommentsView: View {
         Task {
             do {
                 let comment = try await SupabaseManager.shared.insertComment(
-                    postID: post.id,
+                    postID: postID,
+                    gifID: gifID,
                     body: body,
                     displayName: auth.currentDisplayName
                 )

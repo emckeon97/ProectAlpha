@@ -148,16 +148,21 @@ final class SupabaseManager {
 
     // MARK: - Comments
 
-    func fetchComments(postID: String) async throws -> [Comment] {
+    func fetchComments(postID: String? = nil, gifID: String? = nil) async throws -> [Comment] {
         var comps = URLComponents(
             url: projectURL.appendingPathComponent("rest/v1/comments"),
             resolvingAgainstBaseURL: false
         )!
-        comps.queryItems = [
+        var items = [
             URLQueryItem(name: "select", value: "*"),
-            URLQueryItem(name: "post_id", value: "eq.\(postID)"),
             URLQueryItem(name: "order", value: "created_at.asc"),
         ]
+        if let postID {
+            items.append(URLQueryItem(name: "post_id", value: "eq.\(postID)"))
+        } else if let gifID {
+            items.append(URLQueryItem(name: "gif_id", value: "eq.\(gifID)"))
+        }
+        comps.queryItems = items
         var req = URLRequest(url: comps.url!)
         baseHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
 
@@ -169,17 +174,24 @@ final class SupabaseManager {
         return array.compactMap(Comment.fromSupabase)
     }
 
-    func insertComment(postID: String, body: String, displayName: String) async throws -> Comment {
+    func insertComment(
+        postID: String? = nil,
+        gifID: String? = nil,
+        body: String,
+        displayName: String
+    ) async throws -> Comment {
         var req = URLRequest(url: projectURL.appendingPathComponent("rest/v1/comments"))
         req.httpMethod = "POST"
         baseHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.setValue("return=representation", forHTTPHeaderField: "Prefer")
-        req.httpBody = try JSONSerialization.data(withJSONObject: [
-            "post_id": postID,
+        var payload: [String: Any] = [
             "body": body,
             "display_name": displayName,
-        ])
+        ]
+        if let postID { payload["post_id"] = postID }
+        if let gifID { payload["gif_id"] = gifID }
+        req.httpBody = try JSONSerialization.data(withJSONObject: payload)
 
         let (data, resp) = try await URLSession.shared.data(for: req)
         guard (resp as? HTTPURLResponse)?.statusCode == 201 else {
@@ -190,6 +202,35 @@ final class SupabaseManager {
             throw SupabaseError.badPayload
         }
         return comment
+    }
+}
+
+    func insertReport(
+        postID: String? = nil,
+        gifID: String? = nil,
+        commentID: String? = nil,
+        reason: String,
+        details: String,
+        reporterName: String
+    ) async throws {
+        var req = URLRequest(url: projectURL.appendingPathComponent("rest/v1/reports"))
+        req.httpMethod = "POST"
+        baseHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        var payload: [String: Any] = [
+            "reason": reason,
+            "details": details,
+            "reporter_name": reporterName,
+        ]
+        if let postID { payload["post_id"] = postID }
+        if let gifID { payload["gif_id"] = gifID }
+        if let commentID { payload["comment_id"] = commentID }
+        req.httpBody = try JSONSerialization.data(withJSONObject: payload)
+
+        let (_, resp) = try await URLSession.shared.data(for: req)
+        guard (resp as? HTTPURLResponse)?.statusCode == 201 else {
+            throw SupabaseError.badStatus
+        }
     }
 }
 

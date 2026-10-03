@@ -2,7 +2,8 @@ import Foundation
 
 struct Comment: Identifiable {
     let id: String
-    let postID: String
+    let postID: String?
+    let gifID: String?
     let displayName: String
     let body: String
     let createdAt: Date
@@ -10,7 +11,6 @@ struct Comment: Identifiable {
     /// Builds a Comment from a Supabase PostgREST row dictionary.
     static func fromSupabase(_ dict: [String: Any]) -> Comment? {
         guard let id = dict["id"] as? String,
-              let postID = dict["post_id"] as? String,
               let body = dict["body"] as? String
         else { return nil }
 
@@ -20,7 +20,8 @@ struct Comment: Identifiable {
         }
         return Comment(
             id: id,
-            postID: postID,
+            postID: dict["post_id"] as? String,
+            gifID: dict["gif_id"] as? String,
             displayName: dict["display_name"] as? String ?? "anon",
             body: body,
             createdAt: createdAt

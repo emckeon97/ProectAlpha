@@ -5,6 +5,9 @@ struct GifPageView: View {
     let gif: Gif
     @ObservedObject var likeManager: LikeManager
 
+    @State private var showingComments = false
+    @State private var showingReport = false
+
     var body: some View {
         ZStack {
             AnimatedGifView(url: gif.fullURL)
@@ -21,9 +24,31 @@ struct GifPageView: View {
                             likeManager.toggleLike(gif)
                         }
                     } label: {
-                        Image(systemName: likeManager.isLiked(gif) ? "heart.fill" : "heart")
+                        Image(systemName: likeManager.isLiked(gif) ? "face.smiling.fill" : "face.smiling")
                             .font(.title2)
-                            .foregroundColor(likeManager.isLiked(gif) ? .red : .white)
+                            .foregroundColor(likeManager.isLiked(gif) ? .yellow : .white)
+                            .padding(12)
+                            .background(Color.black.opacity(0.55))
+                            .clipShape(Circle())
+                    }
+
+                    Button {
+                        showingComments = true
+                    } label: {
+                        Image(systemName: "bubble.left")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .padding(12)
+                            .background(Color.black.opacity(0.55))
+                            .clipShape(Circle())
+                    }
+
+                    Button {
+                        showingReport = true
+                    } label: {
+                        Image(systemName: "flag")
+                            .font(.title2)
+                            .foregroundColor(.white)
                             .padding(12)
                             .background(Color.black.opacity(0.55))
                             .clipShape(Circle())
@@ -44,6 +69,12 @@ struct GifPageView: View {
                 }
                 .padding(.bottom, 100)
             }
+        }
+        .sheet(isPresented: $showingComments) {
+            CommentsView(postID: nil, gifID: gif.id)
+        }
+        .sheet(isPresented: $showingReport) {
+            ReportView(target: .gif(id: gif.id, title: gif.title))
         }
     }
 }

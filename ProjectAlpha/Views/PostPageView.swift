@@ -8,6 +8,7 @@ struct PostPageView: View {
     @EnvironmentObject var postService: PostService
     @State private var image: UIImage?
     @State private var showingComments = false
+    @State private var showingReport = false
 
     var body: some View {
         ZStack {
@@ -44,9 +45,9 @@ struct PostPageView: View {
                             likeManager.toggleLike(id: post.id, title: post.caption)
                         }
                     } label: {
-                        Image(systemName: likeManager.isLiked(id: post.id) ? "heart.fill" : "heart")
+                        Image(systemName: likeManager.isLiked(id: post.id) ? "face.smiling.fill" : "face.smiling")
                             .font(.title2)
-                            .foregroundColor(likeManager.isLiked(id: post.id) ? .red : .white)
+                            .foregroundColor(likeManager.isLiked(id: post.id) ? .yellow : .white)
                             .padding(12)
                             .background(Color.black.opacity(0.55))
                             .clipShape(Circle())
@@ -63,6 +64,17 @@ struct PostPageView: View {
                             .clipShape(Circle())
                     }
 
+                    Button {
+                        showingReport = true
+                    } label: {
+                        Image(systemName: "flag")
+                            .font(.title2)
+                            .foregroundColor(.white)
+                            .padding(12)
+                            .background(Color.black.opacity(0.55))
+                            .clipShape(Circle())
+                    }
+
                     Spacer()
                 }
                 .padding(.bottom, 100)
@@ -72,7 +84,10 @@ struct PostPageView: View {
             image = await postService.loadImage(for: post)
         }
         .sheet(isPresented: $showingComments) {
-            CommentsView(post: post)
+            CommentsView(postID: post.id, gifID: nil)
+        }
+        .sheet(isPresented: $showingReport) {
+            ReportView(target: .post(post))
         }
     }
 }
