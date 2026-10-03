@@ -21,24 +21,36 @@ final class LikeManager: ObservableObject {
         }
     }
 
-    func isLiked(_ gif: Gif) -> Bool {
-        likedIDs.contains(gif.id)
+    func isLiked(id: String) -> Bool {
+        likedIDs.contains(id)
     }
 
-    func toggleLike(_ gif: Gif) {
-        if likedIDs.contains(gif.id) {
-            likedIDs.remove(gif.id)
-            adjustKeywords(from: gif.title, by: -1)
+    func isLiked(_ gif: Gif) -> Bool {
+        isLiked(id: gif.id)
+    }
+
+    func toggleLike(id: String, title: String) {
+        if likedIDs.contains(id) {
+            likedIDs.remove(id)
+            adjustKeywords(from: title, by: -1)
         } else {
-            likedIDs.insert(gif.id)
-            adjustKeywords(from: gif.title, by: 1)
+            likedIDs.insert(id)
+            adjustKeywords(from: title, by: 1)
         }
         save()
     }
 
-    /// How strongly a GIF matches your liked keywords. Higher = show first.
+    func toggleLike(_ gif: Gif) {
+        toggleLike(id: gif.id, title: gif.title)
+    }
+
+    /// How strongly an item matches your liked keywords. Higher = show first.
+    func score(id: String, title: String) -> Double {
+        keywords(from: title).reduce(0) { $0 + (keywordScores[$1] ?? 0) }
+    }
+
     func score(_ gif: Gif) -> Double {
-        keywords(from: gif.title).reduce(0) { $0 + (keywordScores[$1] ?? 0) }
+        score(id: gif.id, title: gif.title)
     }
 
     // MARK: - Private
