@@ -8,6 +8,8 @@ final class RedditService: ObservableObject {
 
     var likeManager: LikeManager?
 
+    private let subreddits = ["memes", "dankmemes", "funny"]
+
     func memeFeed() {
         guard !isLoading else { return }
 
@@ -18,7 +20,8 @@ final class RedditService: ObservableObject {
             defer { isLoading = false }
 
             do {
-                var components = URLComponents(string: "https://www.reddit.com/r/memes/hot.json")!
+                let sub = subreddits.randomElement() ?? "memes"
+                var components = URLComponents(string: "https://www.reddit.com/r/\(sub)/hot.json")!
                 components.queryItems = [
                     URLQueryItem(name: "limit", value: "50"),
                     URLQueryItem(name: "raw_json", value: "1")
@@ -62,6 +65,11 @@ struct FeedItem: Identifiable {
     let kind: Kind
 
     fileprivate init?(post: RedditPost) {
+        // Skip NSFW, stickied mod posts, deleted/removed posts, text posts, and gallery albums.
+        guard !(post.over18 ?? false), !(post.stickied ?? false), !(post.isGallery ?? false) else { return nil }
+        let title = post.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !title.isEmpty, title != "[deleted]", title != "[removed]", post.postHint != "self" else { return nil }
+
         let mediaURL: String?
         let kind: Kind
 
@@ -78,7 +86,7 @@ struct FeedItem: Identifiable {
         }
 
         self.id = post.id
-        self.title = post.title
+        self.title = title
         self.url = url
         self.kind = kind
     }
@@ -103,6 +111,9 @@ private struct RedditPost: Decodable {
     let urlOverriddenByDestination: String?
     let postHint: String?
     let isVideo: Bool
+    let isGallery: Bool?
+    let over18: Bool?
+    let stickied: Bool?
     let media: RedditMedia?
 
     enum CodingKeys: String, CodingKey {
@@ -112,6 +123,9 @@ private struct RedditPost: Decodable {
         case urlOverriddenByDestination = "url_overridden_by_dest"
         case postHint = "post_hint"
         case isVideo = "is_video"
+        case isGallery = "is_gallery"
+        case over18 = "over_18"
+        case stickied
         case media
     }
 }
