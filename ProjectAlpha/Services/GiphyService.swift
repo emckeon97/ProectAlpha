@@ -19,6 +19,15 @@ final class GiphyService: ObservableObject {
         fetch(path: "trending", extraItems: [])
     }
 
+    /// The main feed: comedy-leaning GIFs, with the query rotated for variety.
+    func comedyFeed() {
+        let queries = [
+            "funny", "comedy", "lol", "hilarious", "memes",
+            "funny animals", "stand up comedy", "funny fails",
+        ]
+        search(queries.randomElement() ?? "funny")
+    }
+
     func search(_ query: String) {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { trending(); return }

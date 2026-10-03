@@ -52,7 +52,7 @@ struct ContentView: View {
             .toolbarColorScheme(.dark, for: .navigationBar)
             .onAppear {
                 service.likeManager = likeManager
-                service.trending()
+                service.comedyFeed()
             }
         }
     }
