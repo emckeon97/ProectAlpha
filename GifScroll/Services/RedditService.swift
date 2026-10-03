@@ -41,12 +41,15 @@ final class RedditService: ObservableObject {
                 let result = try JSONDecoder().decode(ArcticShiftResponse.self, from: data)
                 let fetchedItems = (result.data ?? []).compactMap { FeedItem(post: $0) }
 
+                // Drop dead media in the background before anything is shown.
+                let liveItems = await filterDeadMedia(fetchedItems)
+
                 if let likeManager {
-                    items = fetchedItems.sorted {
+                    items = liveItems.sorted {
                         likeManager.score(id: $0.id, title: $0.title) > likeManager.score(id: $1.id, title: $1.title)
                     }
                 } else {
-                    items = fetchedItems
+                    items = liveItems
                 }
 
                 if items.isEmpty {
@@ -55,6 +58,42 @@ final class RedditService: ObservableObject {
             } catch {
                 errorMessage = "Couldn't load memes. Check your connection and try again."
             }
+        }
+    }
+
+    // MARK: - Dead media filtering
+
+    /// HEAD-checks every media URL concurrently and drops the dead ones.
+    /// Fail-open: timeouts, network errors, and servers that don't support
+    /// HEAD (405/501) keep the item — only definitive 4xx/5xx drops it.
+    private nonisolated func filterDeadMedia(_ items: [FeedItem]) async -> [FeedItem] {
+        let kept: [FeedItem] = await withTaskGroup(of: FeedItem?.self) { group in
+            for item in items {
+                group.addTask { await urlIsAlive(item.url) ? item : nil }
+            }
+            var alive: [FeedItem] = []
+            for await item in group {
+                if let item { alive.append(item) }
+            }
+            return alive
+        }
+        // Task groups finish out of order — restore the original order.
+        let order = Dictionary(uniqueKeysWithValues: items.enumerated().map { ($1.id, $0) })
+        return kept.sorted { (order[$0.id] ?? 0) < (order[$1.id] ?? 0) }
+    }
+
+    private nonisolated func urlIsAlive(_ url: URL) async -> Bool {
+        var request = URLRequest(url: url)
+        request.httpMethod = "HEAD"
+        request.timeoutInterval = 6
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
+            guard let http = response as? HTTPURLResponse else { return true }
+            let code = http.statusCode
+            if code == 405 || code == 501 { return true } // HEAD not supported — keep
+            return (200..<400).contains(code)
+        } catch {
+            return true // fail open on timeouts / network errors
         }
     }
 }
