@@ -1,11 +1,9 @@
 import SwiftUI
 import GoogleMobileAds
 
-/// AdMob config. These are Google's TEST ids — they always serve test ads.
-/// When you're ready to earn: create an app + ad units at apps.admob.com and
-/// swap the values here (and GADApplicationIdentifier in Info.plist).
+/// AdMob config — live IDs. Change adEveryNItems to adjust ad frequency.
 enum AdConfig {
-    static let bannerUnitID = "ca-app-pub-3940256099942544/6300978111"
+    static let bannerUnitID = "ca-app-pub-8263714518098380/5630499497"
     static let adEveryNItems = 5
 }
 
