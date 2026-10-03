@@ -64,7 +64,9 @@ final class GiphyService: ObservableObject {
                 let fetched = decoded.data
                 if let ranker = likeManager {
                     // Algorithm: most-liked-keyword-matching GIFs first.
-                    gifs = fetched.sorted { ranker.score($0) > ranker.score($1) }
+                    gifs = fetched.sorted {
+                        ranker.score(id: $0.id, title: $0.title) > ranker.score(id: $1.id, title: $1.title)
+                    }
                 } else {
                     gifs = fetched
                 }

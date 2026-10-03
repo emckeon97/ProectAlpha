@@ -203,7 +203,6 @@ final class SupabaseManager {
         }
         return comment
     }
-}
 
     func insertReport(
         postID: String? = nil,

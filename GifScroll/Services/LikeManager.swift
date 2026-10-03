@@ -1,8 +1,8 @@
 import Foundation
 
 /// Local-only like store + content-based ranking.
-/// Learns keywords from the titles of GIFs you like, then scores new
-/// GIFs by how closely their titles match. Likes persist across launches.
+/// Learns keywords from liked meme titles, then ranks similar content.
+/// Likes persist across launches.
 @MainActor
 final class LikeManager: ObservableObject {
     @Published private(set) var likedIDs: Set<String> = []
@@ -25,9 +25,6 @@ final class LikeManager: ObservableObject {
         likedIDs.contains(id)
     }
 
-    func isLiked(_ gif: Gif) -> Bool {
-        isLiked(id: gif.id)
-    }
 
     func toggleLike(id: String, title: String) {
         if likedIDs.contains(id) {
@@ -40,18 +37,12 @@ final class LikeManager: ObservableObject {
         save()
     }
 
-    func toggleLike(_ gif: Gif) {
-        toggleLike(id: gif.id, title: gif.title)
-    }
 
     /// How strongly an item matches your liked keywords. Higher = show first.
     func score(id: String, title: String) -> Double {
         keywords(from: title).reduce(0) { $0 + (keywordScores[$1] ?? 0) }
     }
 
-    func score(_ gif: Gif) -> Double {
-        score(id: gif.id, title: gif.title)
-    }
 
     // MARK: - Private
 
@@ -66,7 +57,7 @@ final class LikeManager: ObservableObject {
     private func keywords(from title: String) -> [String] {
         let stopwords: Set<String> = [
             "the", "a", "an", "and", "or", "of", "to", "in", "on", "for",
-            "with", "gif", "giphy", "via", "from", "this", "that", "you"
+            "with", "meme", "via", "from", "this", "that", "you"
         ]
         return title
             .lowercased()
