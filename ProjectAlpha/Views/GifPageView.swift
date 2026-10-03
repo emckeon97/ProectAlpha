@@ -13,37 +13,36 @@ struct GifPageView: View {
             VStack {
                 Spacer()
 
-                HStack {
+                HStack(spacing: 16) {
                     Spacer()
 
-                    VStack(spacing: 16) {
-                        Button {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-                                likeManager.toggleLike(gif)
-                            }
-                        } label: {
-                            Image(systemName: likeManager.isLiked(gif) ? "heart.fill" : "heart")
+                    Button {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                            likeManager.toggleLike(gif)
+                        }
+                    } label: {
+                        Image(systemName: likeManager.isLiked(gif) ? "heart.fill" : "heart")
+                            .font(.title2)
+                            .foregroundColor(likeManager.isLiked(gif) ? .red : .white)
+                            .padding(12)
+                            .background(Color.black.opacity(0.55))
+                            .clipShape(Circle())
+                    }
+
+                    if let url = gif.fullURL {
+                        ShareLink(item: url) {
+                            Image(systemName: "square.and.arrow.up")
                                 .font(.title2)
-                                .foregroundColor(likeManager.isLiked(gif) ? .red : .white)
+                                .foregroundColor(.white)
                                 .padding(12)
                                 .background(Color.black.opacity(0.55))
                                 .clipShape(Circle())
                         }
-
-                        if let url = gif.fullURL {
-                            ShareLink(item: url) {
-                                Image(systemName: "square.and.arrow.up")
-                                    .font(.title2)
-                                    .foregroundColor(.white)
-                                    .padding(12)
-                                    .background(Color.black.opacity(0.55))
-                                    .clipShape(Circle())
-                            }
-                        }
                     }
-                    .padding(.trailing, 16)
-                    .padding(.bottom, 80)
+
+                    Spacer()
                 }
+                .padding(.bottom, 60)
             }
         }
     }
