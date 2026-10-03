@@ -8,9 +8,10 @@ struct ProfileView: View {
     @EnvironmentObject var repostService: RepostService
     @EnvironmentObject var likeManager: LikeManager
 
-    @State private var tab = 0 // 0 = Uploads, 1 = Shared
+    @State private var tab = 0 // 0 = Uploads, 1 = Shared, 2 = Favorites
     @State private var selectedPost: Post?
     @State private var selectedRepost: Repost?
+    @State private var selectedLiked: LikedItem?
 
     private var uid: String? { auth.userId }
     private var myUploads: [Post] { postService.myPosts(userId: uid) }
@@ -31,14 +32,17 @@ struct ProfileView: View {
                     Picker("Library", selection: $tab) {
                         Text("Uploads").tag(0)
                         Text("Shared").tag(1)
+                        Text("Favorites").tag(2)
                     }
                     .pickerStyle(.segmented)
                     .padding(.horizontal)
 
                     if tab == 0 {
                         uploadsGrid
-                    } else {
+                    } else if tab == 1 {
                         sharedGrid
+                    } else {
+                        favoritesGrid
                     }
                 }
                 .padding(.top)
@@ -59,6 +63,9 @@ struct ProfileView: View {
         }
         .sheet(item: $selectedRepost) { repost in
             RepostDetailView(repost: repost)
+        }
+        .sheet(item: $selectedLiked) { liked in
+            LikedDetailView(liked: liked)
         }
     }
 
@@ -143,6 +150,28 @@ struct ProfileView: View {
                     ForEach(repostService.reposts) { repost in
                         Button { selectedRepost = repost } label: {
                             RepostThumb(repost: repost)
+                        }
+                    }
+                }
+                .padding(.horizontal, 2)
+            }
+        }
+    }
+
+    private var favoritesGrid: some View {
+        let favorites = likeManager.likedItems.filter { $0.url != nil }
+        return Group {
+            if favorites.isEmpty {
+                emptyState(
+                    icon: "face.smiling",
+                    title: "No favorites yet",
+                    subtitle: "Tap the laugh button on any meme to save it here."
+                )
+            } else {
+                LazyVGrid(columns: columns, spacing: 2) {
+                    ForEach(favorites) { liked in
+                        Button { selectedLiked = liked } label: {
+                            LikedThumb(liked: liked)
                         }
                     }
                 }
@@ -348,6 +377,93 @@ private struct RepostDetailView: View {
                     dismiss()
                 }
                 Button("Cancel", role: .cancel) {}
+            }
+        }
+    }
+}
+
+/// Square thumbnail for a favorited (laugh-reacted) meme.
+private struct LikedThumb: View {
+    let liked: LikedItem
+
+    var body: some View {
+        ZStack {
+            Color(white: 0.12)
+            if let urlString = liked.url, let url = URL(string: urlString) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable().scaledToFill()
+                    case .failure:
+                        Image(systemName: "photo")
+                            .foregroundColor(.gray)
+                    default:
+                        ProgressView().tint(.gray)
+                    }
+                }
+            }
+            if liked.kind == "video" {
+                Image(systemName: "play.circle.fill")
+                    .font(.title)
+                    .foregroundColor(.white.opacity(0.85))
+            }
+        }
+        .aspectRatio(1, contentMode: .fill)
+        .clipped()
+    }
+}
+
+/// Full-screen view of a favorited meme, with unlike.
+private struct LikedDetailView: View {
+    let liked: LikedItem
+    @EnvironmentObject var likeManager: LikeManager
+    @Environment(\.dismiss) var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Color.black.ignoresSafeArea()
+                VStack(spacing: 16) {
+                    if liked.kind == "video",
+                       let urlString = liked.url, let url = URL(string: urlString) {
+                        VideoPlayerView(url: url)
+                            .frame(height: 400)
+                    } else if let urlString = liked.url, let url = URL(string: urlString) {
+                        AnimatedGifView(url: url)
+                            .frame(height: 400)
+                    } else {
+                        Image(systemName: "photo")
+                            .font(.largeTitle)
+                            .foregroundColor(.gray)
+                            .frame(height: 300)
+                    }
+                    if !liked.title.isEmpty {
+                        Text(liked.title)
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
+                    Spacer()
+                }
+                .padding(.top)
+            }
+            .navigationTitle("Favorite")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.black, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") { dismiss() }
+                }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        likeManager.toggleLike(id: liked.id, title: liked.title)
+                        dismiss()
+                    } label: {
+                        Image(systemName: "face.smiling.fill")
+                            .foregroundColor(.yellow)
+                    }
+                }
             }
         }
     }

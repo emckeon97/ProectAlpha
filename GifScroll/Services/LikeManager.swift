@@ -1,20 +1,38 @@
 import Foundation
 
+/// A meme the user laugh-reacted to, with enough media info to display it.
+struct LikedItem: Codable, Identifiable {
+    let id: String
+    let title: String
+    let url: String?
+    let kind: String? // "image" | "gif" | "video"
+}
+
 /// Local-only like store + content-based ranking.
 /// Learns keywords from liked meme titles, then ranks similar content.
 /// Likes persist across launches.
 @MainActor
 final class LikeManager: ObservableObject {
-    @Published private(set) var likedIDs: Set<String> = []
+    @Published private(set) var likedItems: [LikedItem] = []
+
+    /// IDs only, for quick membership checks (migrated from the old store).
+    var likedIDs: Set<String> { Set(likedItems.map(\.id)) }
 
     private var keywordScores: [String: Double] = [:]
 
-    private let likedKey = "gifscroll.likedIDs"
+    private let likedKey = "gifscroll.likedItems"
+    private let legacyLikedKey = "gifscroll.likedIDs"
     private let keywordsKey = "gifscroll.keywordScores"
 
     init() {
-        if let saved = UserDefaults.standard.array(forKey: likedKey) as? [String] {
-            likedIDs = Set(saved)
+        if let data = UserDefaults.standard.data(forKey: likedKey),
+           let decoded = try? JSONDecoder().decode([LikedItem].self, from: data) {
+            likedItems = decoded
+        } else if let legacy = UserDefaults.standard.array(forKey: legacyLikedKey) as? [String] {
+            // Migrate: old likes had no media, so they count for ranking
+            // but can't be shown in the Favorites grid until re-liked.
+            likedItems = legacy.map { LikedItem(id: $0, title: "", url: nil, kind: nil) }
+            save()
         }
         if let saved = UserDefaults.standard.dictionary(forKey: keywordsKey) as? [String: Double] {
             keywordScores = saved
@@ -25,18 +43,27 @@ final class LikeManager: ObservableObject {
         likedIDs.contains(id)
     }
 
-
     func toggleLike(id: String, title: String) {
-        if likedIDs.contains(id) {
-            likedIDs.remove(id)
+        toggleLike(id: id, title: title, url: nil, kind: nil)
+    }
+
+    func toggleLike(id: String, title: String, url: URL?, kind: FeedItem.Kind?) {
+        if let index = likedItems.firstIndex(where: { $0.id == id }) {
+            likedItems.remove(at: index)
             adjustKeywords(from: title, by: -1)
         } else {
-            likedIDs.insert(id)
+            let kindString: String?
+            switch kind {
+            case .image: kindString = "image"
+            case .gif: kindString = "gif"
+            case .video: kindString = "video"
+            case .none: kindString = nil
+            }
+            likedItems.append(LikedItem(id: id, title: title, url: url?.absoluteString, kind: kindString))
             adjustKeywords(from: title, by: 1)
         }
         save()
     }
-
 
     /// How strongly an item matches your liked keywords. Higher = show first.
     func score(id: String, title: String) -> Double {
@@ -66,7 +93,9 @@ final class LikeManager: ObservableObject {
     }
 
     private func save() {
-        UserDefaults.standard.set(Array(likedIDs), forKey: likedKey)
+        if let data = try? JSONEncoder().encode(likedItems) {
+            UserDefaults.standard.set(data, forKey: likedKey)
+        }
         UserDefaults.standard.set(keywordScores, forKey: keywordsKey)
     }
 }
