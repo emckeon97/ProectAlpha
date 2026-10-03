@@ -7,6 +7,7 @@ struct Post: Identifiable, Codable {
     let caption: String
     let createdAt: Date
     var likeCount: Int
+    let userId: String?         // Supabase auth user id of the poster, if known
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -15,6 +16,7 @@ struct Post: Identifiable, Codable {
         case caption
         case createdAt = "created_at"
         case likeCount = "like_count"
+        case userId = "user_id"
     }
 }
 
@@ -37,7 +39,8 @@ extension Post {
             imageURL: imageURL,
             caption: caption,
             createdAt: createdAt,
-            likeCount: likeCount
+            likeCount: likeCount,
+            userId: dict["user_id"] as? String
         )
     }
 }

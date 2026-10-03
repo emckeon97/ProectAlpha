@@ -103,14 +103,16 @@ final class SupabaseManager {
         return array.compactMap(Post.fromSupabase)
     }
 
-    func insertPost(imageURL: String, caption: String) async throws -> Post {
+    func insertPost(imageURL: String, caption: String, userId: String? = nil) async throws -> Post {
         var req = URLRequest(url: projectURL.appendingPathComponent("rest/v1/posts"))
         req.httpMethod = "POST"
         baseHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
         req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         req.setValue("return=representation", forHTTPHeaderField: "Prefer")
+        var payload: [String: Any] = ["image_url": imageURL, "caption": caption]
+        if let userId { payload["user_id"] = userId }
         req.httpBody = try JSONSerialization.data(
-            withJSONObject: ["image_url": imageURL, "caption": caption]
+            withJSONObject: payload
         )
 
         let (data, resp) = try await URLSession.shared.data(for: req)
@@ -122,6 +124,89 @@ final class SupabaseManager {
             throw SupabaseError.badPayload
         }
         return post
+    }
+
+    // MARK: - Reposts ("Shared" tab on the personal page)
+
+    func fetchReposts(userId: String) async throws -> [Repost] {
+        var comps = URLComponents(
+            url: projectURL.appendingPathComponent("rest/v1/reposts"),
+            resolvingAgainstBaseURL: false
+        )!
+        comps.queryItems = [
+            URLQueryItem(name: "select", value: "*"),
+            URLQueryItem(name: "user_id", value: "eq.\(userId)"),
+            URLQueryItem(name: "order", value: "created_at.desc"),
+            URLQueryItem(name: "limit", value: "200"),
+        ]
+        var req = URLRequest(url: comps.url!)
+        baseHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
+
+        let (data, resp) = try await URLSession.shared.data(for: req)
+        guard (resp as? HTTPURLResponse)?.statusCode == 200 else {
+            throw SupabaseError.badStatus
+        }
+        let array = try JSONSerialization.jsonObject(with: data) as? [[String: Any]] ?? []
+        return array.compactMap(Repost.fromSupabase)
+    }
+
+    func insertRepost(_ repost: Repost, userId: String) async throws -> Repost {
+        var req = URLRequest(url: projectURL.appendingPathComponent("rest/v1/reposts"))
+        req.httpMethod = "POST"
+        baseHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue("return=representation", forHTTPHeaderField: "Prefer")
+        let payload: [String: Any] = [
+            "id": repost.id,
+            "user_id": userId,
+            "item_id": repost.itemId,
+            "title": repost.title,
+            "url": repost.url?.absoluteString ?? "",
+            "kind": repost.kind,
+        ]
+        req.httpBody = try JSONSerialization.data(withJSONObject: payload)
+
+        let (data, resp) = try await URLSession.shared.data(for: req)
+        guard (resp as? HTTPURLResponse)?.statusCode == 201 else {
+            throw SupabaseError.badStatus
+        }
+        let array = try JSONSerialization.jsonObject(with: data) as? [[String: Any]] ?? []
+        guard let saved = array.first.flatMap(Repost.fromSupabase) else {
+            throw SupabaseError.badPayload
+        }
+        return saved
+    }
+
+    func deleteRepost(id: String) async throws {
+        var comps = URLComponents(
+            url: projectURL.appendingPathComponent("rest/v1/reposts"),
+            resolvingAgainstBaseURL: false
+        )!
+        comps.queryItems = [URLQueryItem(name: "id", value: "eq.\(id)")]
+        var req = URLRequest(url: comps.url!)
+        req.httpMethod = "DELETE"
+        baseHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
+
+        let (_, resp) = try await URLSession.shared.data(for: req)
+        guard (resp as? HTTPURLResponse)?.statusCode == 204 else {
+            throw SupabaseError.badStatus
+        }
+    }
+
+    func deletePost(id: String) async throws {
+        var comps = URLComponents(
+            url: projectURL.appendingPathComponent("rest/v1/posts"),
+            resolvingAgainstBaseURL: false
+        )!
+        comps.queryItems = [URLQueryItem(name: "id", value: "eq.\(id)")]
+        var req = URLRequest(url: comps.url!)
+        req.httpMethod = "DELETE"
+        baseHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
+
+        let (_, resp) = try await URLSession.shared.data(for: req)
+        guard (resp as? HTTPURLResponse)?.statusCode == 204 else {
+            throw SupabaseError.badStatus
+        }
     }
 
     // MARK: - Storage

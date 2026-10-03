@@ -6,17 +6,20 @@ import Foundation
 final class AuthManager: ObservableObject {
     @Published private(set) var email: String?
     @Published private(set) var displayName: String?
+    @Published private(set) var userId: String?
     @Published private(set) var isSignedIn = false
 
     private let tokenKey = "gifscroll.authToken"
     private let emailKey = "gifscroll.authEmail"
     private let nameKey = "gifscroll.authName"
+    private let userIdKey = "gifscroll.authUserId"
 
     init() {
         if let token = UserDefaults.standard.string(forKey: tokenKey) {
             SupabaseManager.shared.authToken = token
             email = UserDefaults.standard.string(forKey: emailKey)
             displayName = UserDefaults.standard.string(forKey: nameKey)
+            userId = UserDefaults.standard.string(forKey: userIdKey)
             isSignedIn = true
         }
     }
@@ -29,7 +32,7 @@ final class AuthManager: ObservableObject {
             email: email, password: password, displayName: displayName
         )
         guard let token = result.accessToken else { return false }
-        persist(token: token, email: result.email ?? email, displayName: displayName)
+        persist(token: token, email: result.email ?? email, displayName: displayName, userId: result.userID)
         return true
     }
 
@@ -37,7 +40,7 @@ final class AuthManager: ObservableObject {
         let result = try await SupabaseManager.shared.signIn(email: email, password: password)
         guard let token = result.accessToken else { throw SupabaseError.badPayload }
         let name = (result.email ?? email).split(separator: "@").first.map(String.init) ?? "anon"
-        persist(token: token, email: result.email ?? email, displayName: name)
+        persist(token: token, email: result.email ?? email, displayName: name, userId: result.userID)
     }
 
     func signOut() {
@@ -45,20 +48,28 @@ final class AuthManager: ObservableObject {
         UserDefaults.standard.removeObject(forKey: tokenKey)
         UserDefaults.standard.removeObject(forKey: emailKey)
         UserDefaults.standard.removeObject(forKey: nameKey)
+        UserDefaults.standard.removeObject(forKey: userIdKey)
         email = nil
         displayName = nil
+        userId = nil
         isSignedIn = false
     }
 
     // MARK: - Private
 
-    private func persist(token: String, email: String, displayName: String) {
+    private func persist(token: String, email: String, displayName: String, userId: String?) {
         SupabaseManager.shared.authToken = token
         UserDefaults.standard.set(token, forKey: tokenKey)
         UserDefaults.standard.set(email, forKey: emailKey)
         UserDefaults.standard.set(displayName, forKey: nameKey)
+        if let userId {
+            UserDefaults.standard.set(userId, forKey: userIdKey)
+        } else {
+            UserDefaults.standard.removeObject(forKey: userIdKey)
+        }
         self.email = email
         self.displayName = displayName
+        self.userId = userId
         isSignedIn = true
     }
 }

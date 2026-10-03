@@ -1,41 +1,24 @@
 import SwiftUI
 
-/// The account tab: sign in/up form, or the signed-in profile with sign out.
+/// The account tab: the personal page when signed in, the auth form otherwise.
 struct AccountView: View {
     @EnvironmentObject var auth: AuthManager
 
     var body: some View {
-        NavigationStack {
-            Group {
-                if auth.isSignedIn {
-                    VStack(spacing: 16) {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 64))
-                            .foregroundColor(.gray)
-                        Text(auth.displayName ?? "anon")
-                            .font(.title2)
-                            .bold()
-                            .foregroundColor(.white)
-                        if let email = auth.email {
-                            Text(email)
-                                .foregroundColor(.gray)
-                        }
-                        Button("Sign Out") { auth.signOut() }
-                            .buttonStyle(.bordered)
-                            .tint(.red)
-                        Spacer()
-                    }
-                    .padding()
-                } else {
+        Group {
+            if auth.isSignedIn {
+                ProfileView()
+            } else {
+                NavigationStack {
                     AuthView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.black.ignoresSafeArea())
+                        .navigationTitle("Account")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbarBackground(.black, for: .navigationBar)
+                        .toolbarColorScheme(.dark, for: .navigationBar)
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.black.ignoresSafeArea())
-            .navigationTitle("GifScroll")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.black, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
         }
     }
 }

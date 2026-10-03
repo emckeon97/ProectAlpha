@@ -4,6 +4,8 @@ import SwiftUI
 struct FeedItemView: View {
     let item: FeedItem
     @ObservedObject var likeManager: LikeManager
+    @EnvironmentObject var repostService: RepostService
+    @EnvironmentObject var auth: AuthManager
 
     @State private var showingComments = false
     @State private var showingReport = false
@@ -58,7 +60,18 @@ struct FeedItemView: View {
                             .clipShape(Circle())
                     }
 
-                    ShareLink(item: item.url) {
+                    Menu {
+                        Button {
+                            repostService.share(item: item, userId: auth.userId)
+                        } label: {
+                            Label("Share to my page", systemImage: "person.crop.square")
+                        }
+                        .disabled(repostService.isShared(itemId: item.id))
+
+                        ShareLink(item: item.url) {
+                            Label("Share…", systemImage: "square.and.arrow.up")
+                        }
+                    } label: {
                         Image(systemName: "square.and.arrow.up")
                             .font(.title2)
                             .foregroundColor(.white)

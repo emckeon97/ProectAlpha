@@ -30,13 +30,13 @@ final class PostService: ObservableObject {
 
     // MARK: - Posting
 
-    func createPost(imageData: Data, caption: String) async throws {
+    func createPost(imageData: Data, caption: String, userId: String? = nil) async throws {
         let trimmed = caption.trimmingCharacters(in: .whitespacesAndNewlines)
 
         if remoteAvailable {
             do {
                 let url = try await supabase.uploadImage(imageData)
-                let post = try await supabase.insertPost(imageURL: url, caption: trimmed)
+                let post = try await supabase.insertPost(imageURL: url, caption: trimmed, userId: userId)
                 posts.insert(post, at: 0)
                 saveCached()
                 return
@@ -55,10 +55,36 @@ final class PostService: ObservableObject {
             imageURL: nil,
             caption: trimmed,
             createdAt: Date(),
-            likeCount: 0
+            likeCount: 0,
+            userId: userId
         )
         posts.insert(post, at: 0)
         saveCached()
+    }
+
+    /// The signed-in user's own uploads (or this device's local posts when anonymous).
+    func myPosts(userId: String?) -> [Post] {
+        posts.filter { post in
+            if let userId {
+                return post.userId == userId
+            } else {
+                // Anonymous: only on-device posts belong to this device.
+                return post.userId == nil && post.imageFileName != nil
+            }
+        }
+    }
+
+    /// Removes a post locally and best-effort from Supabase.
+    func deletePost(_ post: Post) {
+        posts.removeAll { $0.id == post.id }
+        if let name = post.imageFileName {
+            try? FileManager.default.removeItem(at: documentsDirectory.appendingPathComponent(name))
+        }
+        saveCached()
+        if post.imageURL != nil {
+            let id = post.id
+            Task { try? await supabase.deletePost(id: id) }
+        }
     }
 
     // MARK: - Images

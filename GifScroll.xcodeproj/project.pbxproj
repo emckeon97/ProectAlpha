@@ -31,6 +31,9 @@
 		BCDEA934D2501353B4C4CE9F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDBAC21689581B04CB7ABB5 /* Assets.xcassets */; };
 		C48318FADF80F394ACE51DA5 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1CEA806BBF8BF7718C1E504 /* Comment.swift */; };
 		FC219D4D5190BC99B39CE5AA /* PostPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96502DFEB39D365CCEBD2D0 /* PostPageView.swift */; };
+		0743FFAF7F87E2DCA36E65D1 /* Repost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4B8F9BE5E2E3E5BDB6DEA0 /* Repost.swift */; };
+		FFE9A60046D8020B76DA7E88 /* RepostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EB5BEA4AD000EF0B811BB7 /* RepostService.swift */; };
+		E389C33BF347E2E9216D874E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FA35CE5D1ADEEAA6109627 /* ProfileView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +64,9 @@
 		EECBCBF4DCB76C106A12ADCB /* LikeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikeManager.swift; sourceTree = "<group>"; };
 		F960768F0EDEB1D145DDACC1 /* GifScrollApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifScrollApp.swift; sourceTree = "<group>"; };
 		FEC42B5C69D2BCDCC39F7D16 /* AnimatedGifView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedGifView.swift; sourceTree = "<group>"; };
+		6A4B8F9BE5E2E3E5BDB6DEA0 /* Repost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repost.swift; sourceTree = "<group>"; };
+		92EB5BEA4AD000EF0B811BB7 /* RepostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepostService.swift; sourceTree = "<group>"; };
+		B7FA35CE5D1ADEEAA6109627 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +103,7 @@
 				D520CE6D069B2AD49E6C30E6 /* CommentsView.swift */,
 				74388A3A2AD16A2BACC3C201 /* ReportView.swift */,
 				7B9D18B030718E0D001408E5 /* VideoPlayerView.swift */,
+				B7FA35CE5D1ADEEAA6109627 /* ProfileView.swift */
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -107,6 +114,7 @@
 				BE951495527FF36C0D371B02 /* Gif.swift */,
 				6253A71611C8F3DC9F6E9A5F /* Post.swift */,
 				C1CEA806BBF8BF7718C1E504 /* Comment.swift */,
+				6A4B8F9BE5E2E3E5BDB6DEA0 /* Repost.swift */
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -120,6 +128,7 @@
 				72802E5DC4C82D90F0B06640 /* SupabaseManager.swift */,
 				E72FA60E670AE2DA638C2F0B /* AuthManager.swift */,
 				7B9D18AE30718E06001408E5 /* RedditService.swift */,
+				92EB5BEA4AD000EF0B811BB7 /* RepostService.swift */
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -233,6 +242,9 @@
 				041E1855DE81532BA52A8297 /* ReportView.swift in Sources */,
 				43A9A6CEF87E39EE3D7D6E2F /* Secrets.swift in Sources */,
 				7B9D18B130718E0D001408E5 /* VideoPlayerView.swift in Sources */,
+				E389C33BF347E2E9216D874E /* ProfileView.swift in Sources */,
+				FFE9A60046D8020B76DA7E88 /* RepostService.swift in Sources */,
+				0743FFAF7F87E2DCA36E65D1 /* Repost.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -4,6 +4,7 @@ struct MainTabView: View {
     @StateObject private var postService = PostService()
     @StateObject private var likeManager = LikeManager()
     @StateObject private var auth = AuthManager()
+    @StateObject private var repostService = RepostService()
     @State private var selectedTab = 1 // Feed is the landing tab.
 
     var body: some View {
@@ -29,5 +30,6 @@ struct MainTabView: View {
         .environmentObject(postService)
         .environmentObject(likeManager)
         .environmentObject(auth)
+        .environmentObject(repostService)
     }
 }
