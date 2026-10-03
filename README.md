@@ -18,8 +18,5 @@ A comedy meme app for iOS, iPadOS, and macOS. Swipe through an endless feed of f
 - **Reports** — flag anything that crosses the line; reports go to moderation.
 - **Accounts** — optional email sign-in to post under your own name.
 
-## Backend
-
-GifScroll uses Supabase for auth, uploads, comments, and reports. The SQL setup (tables for posts, comments, reports, and reposts, plus the `post-images` storage bucket) lives in the release notes. An Android port shares the same backend.
 
 © 2026 Elijah McKeon. All rights reserved.
