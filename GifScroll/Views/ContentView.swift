@@ -4,13 +4,18 @@ struct ContentView: View {
     @StateObject private var service = RedditService()
     @EnvironmentObject var likeManager: LikeManager
 
-    /// Feed pages with an ad slot (nil) interleaved every N memes.
+    /// Feed pages with ad slots (nil) interleaved on a repeating 5 / 10 pattern.
     private var pages: [FeedItem?] {
         var result: [FeedItem?] = []
-        for (index, item) in service.items.enumerated() {
+        var sinceAd = 0
+        var patternIndex = 0
+        for item in service.items {
             result.append(item)
-            if (index + 1) % AdConfig.adEveryNItems == 0 {
+            sinceAd += 1
+            if sinceAd >= AdConfig.adPattern[patternIndex % AdConfig.adPattern.count] {
                 result.append(nil)
+                sinceAd = 0
+                patternIndex += 1
             }
         }
         return result

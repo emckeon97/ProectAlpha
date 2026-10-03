@@ -4,7 +4,8 @@ import GoogleMobileAds
 /// AdMob config — live IDs. Change adEveryNItems to adjust ad frequency.
 enum AdConfig {
     static let bannerUnitID = "ca-app-pub-8263714518098380/5630499497"
-    static let adEveryNItems = 5
+    /// Ad slots follow this repeating pattern: 5 memes, ad, 10 memes, ad, ...
+    static let adPattern = [5, 10]
 }
 
 /// Full-screen ad page slotted into the vertical feed.
