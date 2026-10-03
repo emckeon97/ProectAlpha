@@ -19,13 +19,18 @@ final class GiphyService: ObservableObject {
         fetch(path: "trending", extraItems: [])
     }
 
-    /// The main feed: comedy-leaning GIFs, with the query rotated for variety.
+    /// The main feed: iFunny-style meme GIFs, with the query rotated for variety.
     func comedyFeed() {
         let queries = [
-            "funny", "comedy", "lol", "hilarious", "memes",
-            "funny animals", "stand up comedy", "funny fails",
+            "meme",
+            "dank memes",
+            "funny memes",
+            "shitpost",
+            "relatable memes",
+            "surreal meme",
+            "cursed memes",
         ]
-        search(queries.randomElement() ?? "funny")
+        search(queries.randomElement() ?? "meme")
     }
 
     func search(_ query: String) {
@@ -50,7 +55,7 @@ final class GiphyService: ObservableObject {
                 var components = URLComponents(string: "https://api.giphy.com/v1/gifs/\(path)")!
                 components.queryItems = [
                     URLQueryItem(name: "api_key", value: apiKey),
-                    URLQueryItem(name: "limit", value: "25"),
+                    URLQueryItem(name: "limit", value: "50"),
                     URLQueryItem(name: "rating", value: "pg-13")
                 ] + extraItems
 
