@@ -1,5 +1,8 @@
 import Foundation
 
+/// Meme feed powered by the Arctic Shift Reddit mirror.
+/// Free, no API key, no login — Reddit's own endpoints now bot-block
+/// unauthenticated requests, so we go through the mirror instead.
 @MainActor
 final class RedditService: ObservableObject {
     @Published private(set) var items: [FeedItem] = []
@@ -21,22 +24,22 @@ final class RedditService: ObservableObject {
 
             do {
                 let sub = subreddits.randomElement() ?? "memes"
-                var components = URLComponents(string: "https://www.reddit.com/r/\(sub)/hot.json")!
+                var components = URLComponents(string: "https://arctic-shift.photon-reddit.com/api/posts/search")!
                 components.queryItems = [
-                    URLQueryItem(name: "limit", value: "50"),
-                    URLQueryItem(name: "raw_json", value: "1")
+                    URLQueryItem(name: "subreddit", value: sub),
+                    URLQueryItem(name: "sort", value: "desc"),
+                    URLQueryItem(name: "limit", value: "50")
                 ]
 
-                var request = URLRequest(url: components.url!)
-                request.setValue("GifScroll/1.0", forHTTPHeaderField: "User-Agent")
+                let request = URLRequest(url: components.url!)
 
                 let (data, response) = try await URLSession.shared.data(for: request)
                 guard (response as? HTTPURLResponse)?.statusCode == 200 else {
                     throw RedditServiceError.invalidResponse
                 }
 
-                let listing = try JSONDecoder().decode(RedditListing.self, from: data)
-                let fetchedItems = listing.data.children.compactMap { FeedItem(post: $0.data) }
+                let result = try JSONDecoder().decode(ArcticShiftResponse.self, from: data)
+                let fetchedItems = (result.data ?? []).compactMap { FeedItem(post: $0) }
 
                 if let likeManager {
                     items = fetchedItems.sorted {
@@ -44,6 +47,10 @@ final class RedditService: ObservableObject {
                     }
                 } else {
                     items = fetchedItems
+                }
+
+                if items.isEmpty {
+                    throw RedditServiceError.invalidResponse
                 }
             } catch {
                 errorMessage = "Couldn't load memes. Check your connection and try again."
@@ -92,16 +99,8 @@ struct FeedItem: Identifiable {
     }
 }
 
-private struct RedditListing: Decodable {
-    let data: RedditListingData
-}
-
-private struct RedditListingData: Decodable {
-    let children: [RedditChild]
-}
-
-private struct RedditChild: Decodable {
-    let data: RedditPost
+private struct ArcticShiftResponse: Decodable {
+    let data: [RedditPost]?
 }
 
 private struct RedditPost: Decodable {
