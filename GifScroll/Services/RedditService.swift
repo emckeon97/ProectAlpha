@@ -91,7 +91,13 @@ final class RedditService: ObservableObject {
             guard let http = response as? HTTPURLResponse else { return true }
             let code = http.statusCode
             if code == 405 || code == 501 { return true } // HEAD not supported — keep
-            return (200..<400).contains(code)
+            guard (200..<400).contains(code) else { return false }
+            // Drop HTML error pages masquerading as media.
+            if let contentType = http.value(forHTTPHeaderField: "Content-Type"),
+               contentType.lowercased().hasPrefix("text/") {
+                return false
+            }
+            return true
         } catch {
             return true // fail open on timeouts / network errors
         }
