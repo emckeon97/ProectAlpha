@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MainTabView: View {
-    @StateObject private var postService = LocalPostService()
+    @StateObject private var postService = PostService()
     @StateObject private var likeManager = LikeManager()
 
     var body: some View {

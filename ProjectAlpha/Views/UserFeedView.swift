@@ -2,7 +2,7 @@ import SwiftUI
 
 /// The community feed: user-uploaded posts, one per full-screen page.
 struct UserFeedView: View {
-    @EnvironmentObject var postService: LocalPostService
+    @EnvironmentObject var postService: PostService
     @EnvironmentObject var likeManager: LikeManager
 
     @State private var showingUpload = false
@@ -55,6 +55,9 @@ struct UserFeedView: View {
             }
             .sheet(isPresented: $showingUpload) {
                 UploadView()
+            }
+            .task {
+                await postService.refresh()
             }
         }
     }

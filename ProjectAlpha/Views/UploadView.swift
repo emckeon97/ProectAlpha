@@ -2,7 +2,7 @@ import SwiftUI
 import PhotosUI
 
 struct UploadView: View {
-    @EnvironmentObject var postService: LocalPostService
+    @EnvironmentObject var postService: PostService
     @Environment(\.dismiss) var dismiss
 
     @State private var selectedItem: PhotosPickerItem?
@@ -84,12 +84,14 @@ struct UploadView: View {
         else { return }
 
         isPosting = true
-        do {
-            try postService.createPost(imageData: data, caption: caption)
-            dismiss()
-        } catch {
-            errorMessage = "Couldn't save your post. Try again."
-            isPosting = false
+        Task {
+            do {
+                try await postService.createPost(imageData: data, caption: caption)
+                dismiss()
+            } catch {
+                errorMessage = "Couldn't post. Check your connection and try again."
+                isPosting = false
+            }
         }
     }
 }

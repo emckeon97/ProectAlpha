@@ -5,18 +5,22 @@ struct PostPageView: View {
     let post: Post
     @ObservedObject var likeManager: LikeManager
 
-    @EnvironmentObject var postService: LocalPostService
+    @EnvironmentObject var postService: PostService
+    @State private var image: UIImage?
 
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
 
-            if let image = postService.image(for: post) {
+            if let image {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()
                     .clipped()
+            } else {
+                ProgressView()
+                    .tint(.white)
             }
 
             VStack {
@@ -51,6 +55,9 @@ struct PostPageView: View {
                 }
                 .padding(.bottom, 60)
             }
+        }
+        .task {
+            image = await postService.loadImage(for: post)
         }
     }
 }
