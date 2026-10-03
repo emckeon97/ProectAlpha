@@ -42,7 +42,7 @@ final class RedditService: ObservableObject {
                 let fetchedItems = (result.data ?? []).compactMap { FeedItem(post: $0) }
 
                 // Drop dead media in the background before anything is shown.
-                let liveItems = await filterDeadMedia(fetchedItems)
+                let liveItems = await Self.filterDeadMedia(fetchedItems)
 
                 if let likeManager {
                     items = liveItems.sorted {
@@ -66,10 +66,10 @@ final class RedditService: ObservableObject {
     /// HEAD-checks every media URL concurrently and drops the dead ones.
     /// Fail-open: timeouts, network errors, and servers that don't support
     /// HEAD (405/501) keep the item — only definitive 4xx/5xx drops it.
-    private nonisolated func filterDeadMedia(_ items: [FeedItem]) async -> [FeedItem] {
+    private static func filterDeadMedia(_ items: [FeedItem]) async -> [FeedItem] {
         let kept: [FeedItem] = await withTaskGroup(of: FeedItem?.self) { group in
             for item in items {
-                group.addTask { await urlIsAlive(item.url) ? item : nil }
+                group.addTask { await Self.urlIsAlive(item.url) ? item : nil }
             }
             var alive: [FeedItem] = []
             for await item in group {
@@ -82,7 +82,7 @@ final class RedditService: ObservableObject {
         return kept.sorted { (order[$0.id] ?? 0) < (order[$1.id] ?? 0) }
     }
 
-    private nonisolated func urlIsAlive(_ url: URL) async -> Bool {
+    private static func urlIsAlive(_ url: URL) async -> Bool {
         var request = URLRequest(url: url)
         request.httpMethod = "HEAD"
         request.timeoutInterval = 6
