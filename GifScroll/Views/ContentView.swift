@@ -4,6 +4,18 @@ struct ContentView: View {
     @StateObject private var service = RedditService()
     @EnvironmentObject var likeManager: LikeManager
 
+    /// Feed pages with an ad slot (nil) interleaved every N memes.
+    private var pages: [FeedItem?] {
+        var result: [FeedItem?] = []
+        for (index, item) in service.items.enumerated() {
+            result.append(item)
+            if (index + 1) % AdConfig.adEveryNItems == 0 {
+                result.append(nil)
+            }
+        }
+        return result
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -26,10 +38,16 @@ struct ContentView: View {
                     ScrollViewReader { proxy in
                         ScrollView(.vertical) {
                             LazyVStack(spacing: 0) {
-                                ForEach(service.items) { item in
-                                    FeedItemView(item: item, likeManager: likeManager)
-                                        .containerRelativeFrame(.vertical)
-                                        .id(item.id)
+                                ForEach(pages.indices, id: \.self) { index in
+                                    if let item = pages[index] {
+                                        FeedItemView(item: item, likeManager: likeManager)
+                                            .containerRelativeFrame(.vertical)
+                                            .id(item.id)
+                                    } else {
+                                        AdPageView()
+                                            .containerRelativeFrame(.vertical)
+                                            .id("ad-\(index)")
+                                    }
                                 }
                             }
                             .scrollTargetLayout()
