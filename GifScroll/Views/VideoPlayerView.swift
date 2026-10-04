@@ -14,6 +14,11 @@ struct VideoPlayerView: View {
         VideoPlayer(player: player)
             .ignoresSafeArea()
             .onAppear {
+                // TikTok-style: video audio plays automatically,
+                // even with the silent switch on.
+                try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+                try? AVAudioSession.sharedInstance().setActive(true)
+                player.isMuted = false
                 player.play()
             }
             .onDisappear {
