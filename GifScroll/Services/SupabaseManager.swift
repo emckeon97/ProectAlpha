@@ -27,6 +27,7 @@ final class SupabaseManager {
 
     struct AuthResult {
         let accessToken: String?
+        let refreshToken: String?
         let userID: String?
         let email: String?
     }
@@ -75,9 +76,32 @@ final class SupabaseManager {
         let user = json["user"] as? [String: Any]
         return AuthResult(
             accessToken: json["access_token"] as? String,
+            refreshToken: json["refresh_token"] as? String,
             userID: user?["id"] as? String,
             email: user?["email"] as? String
         )
+    }
+
+    /// Exchange a refresh token for a new access token.
+    func refreshSession(refreshToken: String) async throws -> AuthResult {
+        var comps = URLComponents(
+            url: projectURL.appendingPathComponent("auth/v1/token"),
+            resolvingAgainstBaseURL: false
+        )!
+        comps.queryItems = [URLQueryItem(name: "grant_type", value: "refresh_token")]
+        var req = URLRequest(url: comps.url!)
+        req.httpMethod = "POST"
+        req.setValue(apiKey, forHTTPHeaderField: "apikey")
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.httpBody = try JSONSerialization.data(
+            withJSONObject: ["refresh_token": refreshToken]
+        )
+
+        let (data, resp) = try await URLSession.shared.data(for: req)
+        guard (resp as? HTTPURLResponse)?.statusCode == 200 else {
+            throw SupabaseError.badStatus
+        }
+        return try parseAuth(data)
     }
 
     // MARK: - Posts
