@@ -193,6 +193,79 @@ final class SupabaseManager {
         }
     }
 
+    // MARK: - Likes ("Favorites" tab on the personal page)
+
+    func fetchLikes(userId: String) async throws -> [LikedItem] {
+        var comps = URLComponents(
+            url: projectURL.appendingPathComponent("rest/v1/likes"),
+            resolvingAgainstBaseURL: false
+        )!
+        comps.queryItems = [
+            URLQueryItem(name: "select", value: "item_id,title,url,kind"),
+            URLQueryItem(name: "user_id", value: "eq.\(userId)"),
+            URLQueryItem(name: "order", value: "created_at.desc"),
+            URLQueryItem(name: "limit", value: "500"),
+        ]
+        var req = URLRequest(url: comps.url!)
+        baseHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
+
+        let (data, resp) = try await URLSession.shared.data(for: req)
+        guard (resp as? HTTPURLResponse)?.statusCode == 200 else {
+            throw SupabaseError.badStatus
+        }
+        let array = try JSONSerialization.jsonObject(with: data) as? [[String: Any]] ?? []
+        return array.compactMap { d in
+            guard let id = d["item_id"] as? String else { return nil }
+            return LikedItem(
+                id: id,
+                title: d["title"] as? String ?? "",
+                url: d["url"] as? String,
+                kind: d["kind"] as? String
+            )
+        }
+    }
+
+    func insertLike(userId: String, item: LikedItem) async throws {
+        var req = URLRequest(url: projectURL.appendingPathComponent("rest/v1/likes"))
+        req.httpMethod = "POST"
+        baseHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue("resolution=merge-duplicates", forHTTPHeaderField: "Prefer")
+        var payload: [String: Any] = [
+            "user_id": userId,
+            "item_id": item.id,
+            "title": item.title,
+        ]
+        if let url = item.url { payload["url"] = url }
+        if let kind = item.kind { payload["kind"] = kind }
+        req.httpBody = try JSONSerialization.data(withJSONObject: payload)
+
+        let (_, resp) = try await URLSession.shared.data(for: req)
+        let code = (resp as? HTTPURLResponse)?.statusCode ?? 0
+        guard code == 201 || code == 200 else {
+            throw SupabaseError.badStatus
+        }
+    }
+
+    func deleteLike(userId: String, itemId: String) async throws {
+        var comps = URLComponents(
+            url: projectURL.appendingPathComponent("rest/v1/likes"),
+            resolvingAgainstBaseURL: false
+        )!
+        comps.queryItems = [
+            URLQueryItem(name: "user_id", value: "eq.\(userId)"),
+            URLQueryItem(name: "item_id", value: "eq.\(itemId)"),
+        ]
+        var req = URLRequest(url: comps.url!)
+        req.httpMethod = "DELETE"
+        baseHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
+
+        let (_, resp) = try await URLSession.shared.data(for: req)
+        guard (resp as? HTTPURLResponse)?.statusCode == 204 else {
+            throw SupabaseError.badStatus
+        }
+    }
+
     func deletePost(id: String) async throws {
         var comps = URLComponents(
             url: projectURL.appendingPathComponent("rest/v1/posts"),
