@@ -6,6 +6,7 @@ struct PostPageView: View {
     @ObservedObject var likeManager: LikeManager
 
     @EnvironmentObject var postService: PostService
+    @EnvironmentObject var auth: AuthManager
     @State private var image: UIImage?
     @State private var showingComments = false
     @State private var showingReport = false
@@ -42,7 +43,7 @@ struct PostPageView: View {
 
                     Button {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-                            likeManager.toggleLike(id: post.id, title: post.caption, url: post.imageURL.flatMap(URL.init(string:)), kind: .image)
+                            likeManager.toggleLike(id: post.id, title: post.caption, url: post.imageURL.flatMap(URL.init(string:)), kind: .image, userId: auth.userId, signedIn: auth.isSignedIn)
                         }
                     } label: {
                         Image(systemName: likeManager.isLiked(id: post.id) ? "face.smiling.fill" : "face.smiling")
