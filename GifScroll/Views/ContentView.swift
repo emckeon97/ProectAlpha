@@ -77,7 +77,7 @@ struct ContentView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    GifScrollLogo(fontSize: 26)
+                    GifScrollLogo(fontSize: 34)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
