@@ -75,7 +75,11 @@ struct ContentView: View {
                     }
                 }
             }
-            .navigationTitle("GifScroll")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    GifScrollLogo(fontSize: 26)
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.black, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
