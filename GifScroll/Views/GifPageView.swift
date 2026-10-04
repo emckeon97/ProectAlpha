@@ -28,7 +28,7 @@ struct FeedItemView: View {
 
                     Button {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-                            likeManager.toggleLike(id: item.id, title: item.title, url: item.url, kind: item.kind)
+                            likeManager.toggleLike(id: item.id, title: item.title, url: item.url, kind: item.kind, userId: auth.userId, signedIn: auth.isSignedIn)
                         }
                     } label: {
                         Image(systemName: likeManager.isLiked(id: item.id) ? "face.smiling.fill" : "face.smiling")
@@ -95,7 +95,7 @@ struct FeedItemView: View {
         .onTapGesture(count: 2) {
             if !likeManager.isLiked(id: item.id) {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-                    likeManager.toggleLike(id: item.id, title: item.title, url: item.url, kind: item.kind)
+                    likeManager.toggleLike(id: item.id, title: item.title, url: item.url, kind: item.kind, userId: auth.userId, signedIn: auth.isSignedIn)
                 }
             }
             showBurst = true
