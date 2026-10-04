@@ -417,6 +417,7 @@ private struct LikedThumb: View {
 private struct LikedDetailView: View {
     let liked: LikedItem
     @EnvironmentObject var likeManager: LikeManager
+    @EnvironmentObject var auth: AuthManager
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
