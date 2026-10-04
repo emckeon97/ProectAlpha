@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var service = KlipyService()
     @EnvironmentObject var likeManager: LikeManager
+    @EnvironmentObject var auth: AuthManager
 
     /// Feed pages with ad slots (nil) interleaved on a repeating 5 / 10 pattern.
     /// On macOS (Catalyst) there is no AdMob SDK, so no ad slots are inserted.
@@ -81,6 +82,10 @@ struct ContentView: View {
             .onAppear {
                 service.likeManager = likeManager
                 service.memeFeed()
+                likeManager.refresh(userId: auth.userId, signedIn: auth.isSignedIn)
+            }
+            .onChange(of: auth.isSignedIn) { _, signedIn in
+                likeManager.refresh(userId: auth.userId, signedIn: signedIn)
             }
         }
     }
