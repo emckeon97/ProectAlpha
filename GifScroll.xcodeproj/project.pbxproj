@@ -17,6 +17,8 @@
 		43A9A6CEF87E39EE3D7D6E2F /* Secrets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29E0C4C7646BB50D4497873F /* Secrets.swift */; };
 		4474EBCF50B89BB3B509F3C2 /* LikeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECBCBF4DCB76C106A12ADCB /* LikeManager.swift */; };
 		4E85A865309160B243A7B3F8 /* GifPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A3C9C18EB00A94FD340752 /* GifPageView.swift */; };
+		05D8C3C5455EFFE6B598B5B2 /* GifScrollLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6546D7C7126086671ECB4D /* GifScrollLogo.swift */; };
+		EB7E829C31E648CC77C7883A /* GifScrollLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6546D7C7126086671ECB4D /* GifScrollLogo.swift */; };
 		55C5BCDFCE520A9E4C8526D2 /* SupabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72802E5DC4C82D90F0B06640 /* SupabaseManager.swift */; };
 		6B85BC543F6CD3CD9785D800 /* GifScrollApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F960768F0EDEB1D145DDACC1 /* GifScrollApp.swift */; };
 		78E54E25750E8D5C7973C731 /* CommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D520CE6D069B2AD49E6C30E6 /* CommentsView.swift */; };
@@ -45,6 +47,7 @@
 		29E0C4C7646BB50D4497873F /* Secrets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secrets.swift; sourceTree = "<group>"; };
 		36DB04BDF4AC680B2DBB7F9F /* UploadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadView.swift; sourceTree = "<group>"; };
 		60A3C9C18EB00A94FD340752 /* GifPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifPageView.swift; sourceTree = "<group>"; };
+		0A6546D7C7126086671ECB4D /* GifScrollLogo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifScrollLogo.swift; sourceTree = "<group>"; };
 		6253A71611C8F3DC9F6E9A5F /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		6847047FB1CE462B7CD98A9F /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		6EC21124793A33FD99EC5024 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -110,6 +113,7 @@
 				FEC42B5C69D2BCDCC39F7D16 /* AnimatedGifView.swift */,
 				6EC21124793A33FD99EC5024 /* ContentView.swift */,
 				60A3C9C18EB00A94FD340752 /* GifPageView.swift */,
+				0A6546D7C7126086671ECB4D /* GifScrollLogo.swift */,
 				36DB04BDF4AC680B2DBB7F9F /* UploadView.swift */,
 				90108D6D7AADA254D67614A6 /* UserFeedView.swift */,
 				C96502DFEB39D365CCEBD2D0 /* PostPageView.swift */,
@@ -272,6 +276,7 @@
 				93ED573C7D74BDC03207517E /* AnimatedGifView.swift in Sources */,
 				0DCEA4EEE089CC1AAB41342A /* ContentView.swift in Sources */,
 				4E85A865309160B243A7B3F8 /* GifPageView.swift in Sources */,
+				05D8C3C5455EFFE6B598B5B2 /* GifScrollLogo.swift in Sources */,
 				4474EBCF50B89BB3B509F3C2 /* LikeManager.swift in Sources */,
 				337282ACC70AF977A90661DE /* Post.swift in Sources */,
 				A9604C929A9D23D69B3A6A4D /* PostService.swift in Sources */,
@@ -307,6 +312,7 @@
 				93ED573C7D74BDC03207517E /* AnimatedGifView.swift in Sources */,
 				0DCEA4EEE089CC1AAB41342A /* ContentView.swift in Sources */,
 				4E85A865309160B243A7B3F8 /* GifPageView.swift in Sources */,
+				EB7E829C31E648CC77C7883A /* GifScrollLogo.swift in Sources */,
 				4474EBCF50B89BB3B509F3C2 /* LikeManager.swift in Sources */,
 				337282ACC70AF977A90661DE /* Post.swift in Sources */,
 				A9604C929A9D23D69B3A6A4D /* PostService.swift in Sources */,
