@@ -458,7 +458,7 @@ private struct LikedDetailView: View {
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        likeManager.toggleLike(id: liked.id, title: liked.title, userId: auth.userId, signedIn: auth.isSignedIn)
+                        likeManager.toggleLike(id: liked.id, title: liked.title, url: nil, kind: nil, userId: auth.userId, signedIn: auth.isSignedIn)
                         dismiss()
                     } label: {
                         Image(systemName: "face.smiling.fill")
