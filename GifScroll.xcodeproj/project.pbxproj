@@ -35,6 +35,7 @@
 		FFE9A60046D8020B76DA7E88 /* RepostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92EB5BEA4AD000EF0B811BB7 /* RepostService.swift */; };
 		E389C33BF347E2E9216D874E /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7FA35CE5D1ADEEAA6109627 /* ProfileView.swift */; };
 		BB7E3F6A5B8C9D04152637E8 /* AdBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6D2E5F4B7B8C93041526D7 /* AdBannerView.swift */; };
+		00A4F93C910FC3417F479AA1 /* KlipyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851AEB162A99E64AC4969753 /* KlipyService.swift */; };
 		9A5C1D4E3F6A7B82930415C6 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 8F4B0C3D2E5F6A71829304B5 /* GoogleMobileAds */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
@@ -71,6 +72,7 @@
 		92EB5BEA4AD000EF0B811BB7 /* RepostService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepostService.swift; sourceTree = "<group>"; };
 		B7FA35CE5D1ADEEAA6109627 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		AA6D2E5F4B7B8C93041526D7 /* AdBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdBannerView.swift; sourceTree = "<group>"; };
+		851AEB162A99E64AC4969753 /* KlipyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KlipyService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,7 +145,8 @@
 				72802E5DC4C82D90F0B06640 /* SupabaseManager.swift */,
 				E72FA60E670AE2DA638C2F0B /* AuthManager.swift */,
 				7B9D18AE30718E06001408E5 /* RedditService.swift */,
-				92EB5BEA4AD000EF0B811BB7 /* RepostService.swift */
+				92EB5BEA4AD000EF0B811BB7 /* RepostService.swift */,
+				851AEB162A99E64AC4969753 /* KlipyService.swift */
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -290,6 +293,7 @@
 				FFE9A60046D8020B76DA7E88 /* RepostService.swift in Sources */,
 				0743FFAF7F87E2DCA36E65D1 /* Repost.swift in Sources */,
 				BB7E3F6A5B8C9D04152637E8 /* AdBannerView.swift in Sources */,
+				00A4F93C910FC3417F479AA1 /* KlipyService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,6 +328,7 @@
 				FFE9A60046D8020B76DA7E88 /* RepostService.swift in Sources */,
 				0743FFAF7F87E2DCA36E65D1 /* Repost.swift in Sources */,
 				BB7E3F6A5B8C9D04152637E8 /* AdBannerView.swift in Sources */,
+				00A4F93C910FC3417F479AA1 /* KlipyService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

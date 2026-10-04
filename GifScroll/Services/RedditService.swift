@@ -116,6 +116,13 @@ struct FeedItem: Identifiable {
     let url: URL
     let kind: Kind
 
+    init(id: String, title: String, url: URL, kind: Kind) {
+        self.id = id
+        self.title = title
+        self.url = url
+        self.kind = kind
+    }
+
     fileprivate init?(post: RedditPost) {
         // Skip NSFW, stickied mod posts, deleted/removed posts, text posts, and gallery albums.
         guard !(post.over18 ?? false), !(post.stickied ?? false), !(post.isGallery ?? false) else { return nil }

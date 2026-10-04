@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var service = RedditService()
+    @StateObject private var service = KlipyService()
     @EnvironmentObject var likeManager: LikeManager
 
     /// Feed pages with ad slots (nil) interleaved on a repeating 5 / 10 pattern.
