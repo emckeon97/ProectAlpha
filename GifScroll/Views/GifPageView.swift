@@ -9,6 +9,7 @@ struct FeedItemView: View {
 
     @State private var showingComments = false
     @State private var showingReport = false
+    @State private var showBurst = false
 
     var body: some View {
         ZStack {
@@ -84,6 +85,20 @@ struct FeedItemView: View {
                 }
                 .padding(.bottom, 100)
             }
+
+            if showBurst {
+                BurstView {
+                    showBurst = false
+                }
+            }
+        }
+        .onTapGesture(count: 2) {
+            if !likeManager.isLiked(id: item.id) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                    likeManager.toggleLike(id: item.id, title: item.title, url: item.url, kind: item.kind)
+                }
+            }
+            showBurst = true
         }
         .sheet(isPresented: $showingComments) {
             CommentsView(postID: nil, gifID: item.id)
@@ -91,5 +106,33 @@ struct FeedItemView: View {
         .sheet(isPresented: $showingReport) {
             ReportView(target: .gif(id: item.id, title: item.title))
         }
+    }
+}
+
+/// Big laugh-react burst shown on double-tap.
+struct BurstView: View {
+    var onDone: () -> Void
+    @State private var scale: CGFloat = 0.3
+    @State private var opacity: Double = 1.0
+
+    var body: some View {
+        Image(systemName: "face.smiling.fill")
+            .font(.system(size: 110))
+            .foregroundColor(.yellow)
+            .scaleEffect(scale)
+            .opacity(opacity)
+            .onAppear {
+                withAnimation(.spring(response: 0.25, dampingFraction: 0.6)) {
+                    scale = 1.0
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
+                    withAnimation(.easeOut(duration: 0.25)) {
+                        opacity = 0
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        onDone()
+                    }
+                }
+            }
     }
 }
