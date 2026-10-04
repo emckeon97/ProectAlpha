@@ -10,6 +10,7 @@ final class AuthManager: ObservableObject {
     @Published private(set) var isSignedIn = false
 
     private let tokenKey = "gifscroll.authToken"
+    private let refreshKey = "gifscroll.authRefreshToken"
     private let emailKey = "gifscroll.authEmail"
     private let nameKey = "gifscroll.authName"
     private let userIdKey = "gifscroll.authUserId"
@@ -21,6 +22,8 @@ final class AuthManager: ObservableObject {
             displayName = UserDefaults.standard.string(forKey: nameKey)
             userId = UserDefaults.standard.string(forKey: userIdKey)
             isSignedIn = true
+            // Refresh the session in the background — access tokens expire after 1 hour.
+            Task { await self.refreshSession() }
         }
     }
 
@@ -32,7 +35,7 @@ final class AuthManager: ObservableObject {
             email: email, password: password, displayName: displayName
         )
         guard let token = result.accessToken else { return false }
-        persist(token: token, email: result.email ?? email, displayName: displayName, userId: result.userID)
+        persist(token: token, refreshToken: result.refreshToken, email: result.email ?? email, displayName: displayName, userId: result.userID)
         return true
     }
 
@@ -40,12 +43,13 @@ final class AuthManager: ObservableObject {
         let result = try await SupabaseManager.shared.signIn(email: email, password: password)
         guard let token = result.accessToken else { throw SupabaseError.badPayload }
         let name = (result.email ?? email).split(separator: "@").first.map(String.init) ?? "anon"
-        persist(token: token, email: result.email ?? email, displayName: name, userId: result.userID)
+        persist(token: token, refreshToken: result.refreshToken, email: result.email ?? email, displayName: name, userId: result.userID)
     }
 
     func signOut() {
         SupabaseManager.shared.authToken = nil
         UserDefaults.standard.removeObject(forKey: tokenKey)
+        UserDefaults.standard.removeObject(forKey: refreshKey)
         UserDefaults.standard.removeObject(forKey: emailKey)
         UserDefaults.standard.removeObject(forKey: nameKey)
         UserDefaults.standard.removeObject(forKey: userIdKey)
@@ -53,6 +57,24 @@ final class AuthManager: ObservableObject {
         displayName = nil
         userId = nil
         isSignedIn = false
+    }
+
+    /// Refresh the access token using the stored refresh token.
+    /// Call this before sync operations — access tokens expire after 1 hour.
+    func refreshSession() async {
+        guard let refreshToken = UserDefaults.standard.string(forKey: refreshKey) else { return }
+        do {
+            let result = try await SupabaseManager.shared.refreshSession(refreshToken: refreshToken)
+            guard let token = result.accessToken else { return }
+            SupabaseManager.shared.authToken = token
+            UserDefaults.standard.set(token, forKey: tokenKey)
+            if let newRefresh = result.refreshToken {
+                UserDefaults.standard.set(newRefresh, forKey: refreshKey)
+            }
+        } catch {
+            // If refresh fails, sign out — the session is dead.
+            signOut()
+        }
     }
 
     // MARK: - Private
@@ -71,5 +93,12 @@ final class AuthManager: ObservableObject {
         self.displayName = displayName
         self.userId = userId
         isSignedIn = true
+    }
+
+    private func persist(token: String, refreshToken: String?, email: String, displayName: String, userId: String?) {
+        if let refreshToken {
+            UserDefaults.standard.set(refreshToken, forKey: refreshKey)
+        }
+        persist(token: token, email: email, displayName: displayName, userId: userId)
     }
 }
