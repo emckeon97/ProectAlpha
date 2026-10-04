@@ -8,7 +8,7 @@ struct LikedItem: Codable, Identifiable {
     let kind: String? // "image" | "gif" | "video"
 }
 
-/// Local-only like store + content-based ranking.
+/// Like store + content-based ranking. Syncs to Supabase when signed in.
 /// Learns keywords from liked meme titles, then ranks similar content.
 /// Likes persist across launches.
 @MainActor
@@ -23,6 +23,7 @@ final class LikeManager: ObservableObject {
     private let likedKey = "gifscroll.likedItems"
     private let legacyLikedKey = "gifscroll.likedIDs"
     private let keywordsKey = "gifscroll.keywordScores"
+    private let supabase = SupabaseManager.shared
 
     init() {
         if let data = UserDefaults.standard.data(forKey: likedKey),
@@ -44,10 +45,11 @@ final class LikeManager: ObservableObject {
     }
 
     func toggleLike(id: String, title: String) {
-        toggleLike(id: id, title: title, url: nil, kind: nil)
+        toggleLike(id: id, title: title, url: nil, kind: nil, userId: nil, signedIn: false)
     }
 
-    func toggleLike(id: String, title: String, url: URL?, kind: FeedItem.Kind?) {
+    func toggleLike(id: String, title: String, url: URL?, kind: FeedItem.Kind?, userId: String? = nil, signedIn: Bool = false) {
+        let wasLiked = likedItems.contains(where: { $0.id == id })
         if let index = likedItems.firstIndex(where: { $0.id == id }) {
             likedItems.remove(at: index)
             adjustKeywords(from: title, by: -1)
@@ -63,6 +65,39 @@ final class LikeManager: ObservableObject {
             adjustKeywords(from: title, by: 1)
         }
         save()
+        // Sync to Supabase in the background (best-effort).
+        if signedIn, let uid = userId {
+            Task {
+                do {
+                    if wasLiked {
+                        try await supabase.deleteLike(userId: uid, itemId: id)
+                    } else if let item = likedItems.first(where: { $0.id == id }) {
+                        try await supabase.insertLike(userId: uid, item: item)
+                    }
+                } catch {
+                    // Local state is authoritative; remote sync is best-effort.
+                }
+            }
+        }
+    }
+
+    /// Loads likes from Supabase when signed in, merging with local likes.
+    func refresh(userId: String?, signedIn: Bool) {
+        guard signedIn, let uid = userId else { return }
+        Task {
+            do {
+                let remote = try await supabase.fetchLikes(userId: uid)
+                var seen = Set(likedItems.map(\.id))
+                for item in remote where !seen.contains(item.id) {
+                    seen.insert(item.id)
+                    likedItems.append(item)
+                    adjustKeywords(from: item.title, by: 1)
+                }
+                save()
+            } catch {
+                // Keep local state on failure.
+            }
+        }
     }
 
     /// How strongly an item matches your liked keywords. Higher = show first.
